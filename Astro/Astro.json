@@ -4,7 +4,7 @@
     "Name": "Astro",
     "Description": "Simplify the astrologian's operation.",
     "InternalName": "Astro",
-    "AssemblyVersion": "0.0.0.2",
+    "AssemblyVersion": "0.0.0.3",
     "RepoUrl": "https://github.com/aiczk/Astro",
     "ApplicableVersion": "any",
     "DalamudApiLevel": 6,

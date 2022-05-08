@@ -7,6 +7,7 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Hooking;
 using Dalamud.IoC;
 using Dalamud.Plugin;
+using FFXIVClientStructs;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Gauge;
 
@@ -22,6 +23,7 @@ namespace Astro
         public Astro([RequiredVersion("1.0")] DalamudPluginInterface pluginInterface)
         {
             DalamudApi.Initialize(pluginInterface);
+            Resolver.Initialize();
             
             receiveAbilityHook = new Hook<ReceiveAbilityDelegate>(DalamudApi.SigScanner.ScanText("4C 89 44 24 ?? 55 56 57 41 54 41 55 41 56 48 8D 6C 24 ??"), ReceiveAbilityEffectDetour);
             receiveAbilityHook.Enable();
