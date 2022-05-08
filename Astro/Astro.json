@@ -1,0 +1,14 @@
+[
+  {
+    "Author": "aiczk",
+    "Name": "Astro",
+    "Description": "",
+    "InternalName": "Astro",
+    "AssemblyVersion": "0.0.0.1",
+    "RepoUrl": "https://github.com/aiczk/Astro",
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 6,
+    "IsHide": false,
+    "IsTestingExclusive": false
+  }
+]
