@@ -63,6 +63,8 @@ namespace Astro.Helper
             var cardType = GetCardType(card);
             while (true)
             {
+                // If there is no one to deal the cards with, the game will crash.
+                // Don't die. UwU
                 var member = DalamudApi.PartyList
                     .Where(x => GetRole(x.ClassJob.GameData!.Role) == cardType)
                     .Where(x => !x.Statuses.Any(y => y.StatusId is >= 1882 and <= 1887 or 43 or 44))
