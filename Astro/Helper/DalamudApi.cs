@@ -18,32 +18,33 @@ using Dalamud.Game.Network;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 
-namespace Monkey.Helper;
-
-public class DalamudApi
+namespace Astro.Helper
 {
-    public static void Initialize(DalamudPluginInterface pluginInterface) => pluginInterface.Create<DalamudApi>();
+    public class DalamudApi
+    { 
+        public static void Initialize(DalamudPluginInterface pluginInterface) => pluginInterface.Create<DalamudApi>();
 
-    [PluginService][RequiredVersion("1.0")] public static DalamudPluginInterface PluginInterface { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static CommandManager CommandManager { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static SigScanner SigScanner { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static DataManager DataManager { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static ClientState ClientState { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static ChatGui ChatGui { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static ChatHandlers ChatHandlers { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static Framework Framework { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static GameNetwork GameNetwork { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static Condition Condition { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static KeyState KeyState { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static GameGui GameGui { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static FlyTextGui FlyTextGui { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static ToastGui ToastGui { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static JobGauges JobGauges { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static PartyFinderGui PartyFinderGui { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static BuddyList BuddyList { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static PartyList PartyList { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static TargetManager TargetManager { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static ObjectTable ObjectTable { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static FateTable FateTable { get; private set; } = null;
-    [PluginService][RequiredVersion("1.0")] public static LibcFunction LibcFunction { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static DalamudPluginInterface PluginInterface { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static CommandManager CommandManager { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static SigScanner SigScanner { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static DataManager DataManager { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static ClientState ClientState { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static ChatGui ChatGui { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static ChatHandlers ChatHandlers { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static Framework Framework { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static GameNetwork GameNetwork { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static Condition Condition { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static KeyState KeyState { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static GameGui GameGui { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static FlyTextGui FlyTextGui { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static ToastGui ToastGui { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static JobGauges JobGauges { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static PartyFinderGui PartyFinderGui { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static BuddyList BuddyList { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static PartyList PartyList { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static TargetManager TargetManager { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static ObjectTable ObjectTable { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static FateTable FateTable { get; private set; } = null;
+        [PluginService][RequiredVersion("1.0")] public static LibcFunction LibcFunction { get; private set; } = null;
+    }
 }
