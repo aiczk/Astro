@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Astro.Helper;
@@ -40,8 +41,9 @@ namespace Astro
             if (!DalamudApi.ClientState.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
                 return;
 
-            var actionId = (uint) Marshal.ReadInt32(effectHeader, 8);
-            if(ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Spell, actionId) >= 1.1f)
+            var totalGcd = MarshalHelper.ReadFloat((IntPtr)ActionManager.Instance() + 0x61C);
+            var elapsedGcd = MarshalHelper.ReadFloat((IntPtr)ActionManager.Instance() + 0x618);
+            if(totalGcd - elapsedGcd <= 1.4f)
                 return;
 
             if (AstrologianHelper.CurrentCard is AstrologianCard.None)
@@ -50,22 +52,22 @@ namespace Astro
             var hasRedraw = DalamudApi.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == 2713);
             if (hasRedraw && AstrologianHelper.CheckDuplicateArcanum())
             {
-                AddQueueAction((IntPtr) ActionManager.Instance(), ActionType.Spell, 3593, 0, 0);
+                AddQueueAction((IntPtr)ActionManager.Instance(), ActionType.Spell, 3593, 0, 0);
                 return;
             }
             
             var cardId = AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard);
             var targetId = AstrologianHelper.GetOptimumTargetId(AstrologianHelper.CurrentCard);
-            AddQueueAction((IntPtr) ActionManager.Instance(), ActionType.Spell, cardId, targetId, 0);
+            AddQueueAction((IntPtr)ActionManager.Instance(), ActionType.Spell, cardId, targetId, 0);
         }
         
         private static void AddQueueAction(IntPtr actionManager, ActionType actionType, uint actionId, uint targetId, uint param) 
         {
-            SafeMemory.Read(actionManager + 0x68, out int queue);
-            if (queue > 0)
+            SafeMemory.Read<bool>(actionManager + 0x68, out var inQueue);
+            if (!inQueue)
                 return;
 
-            SafeMemory.Write(actionManager + 0x68, 1);
+            SafeMemory.Write(actionManager + 0x68, true);
             SafeMemory.Write(actionManager + 0x6C, (byte)actionType);
             SafeMemory.Write(actionManager + 0x70, actionId);
             SafeMemory.Write(actionManager + 0x78, targetId);
