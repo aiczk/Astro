@@ -32,12 +32,11 @@ namespace Astro.Helper
         {
             {
                 ArcanumType.Melee,
-                new List<string> { "DRG", "SAM", "NIN", "MNK", "RPR", "DRK", "GNB", "WAR", "PLD", "GLA", "MRD" }
+                new List<string> { "DRG", "SAM", "NIN", "MNK", "RPR" }
             },
             {
                 ArcanumType.Range,
-                new List<string>
-                    { "BLM", "SMN", "MCH", "BRD", "RDM", "DNC", "BLU", "SGE", "ARC", "WHM", "SCH", "AST", "CNJ" }
+                new List<string> { "BLM", "SMN", "MCH", "BRD", "RDM", "DNC" }
             }
         };
 
@@ -63,7 +62,7 @@ namespace Astro.Helper
             var cardType = GetCardType(card);
             while (true)
             {
-                // If there is no one to deal the cards with, the game will crash.
+                // Maybe, If there is no one to deal the cards with, the game will crash.
                 // Don't die. UwU
                 var member = DalamudApi.PartyList
                     .Where(x => GetRole(x.ClassJob.GameData!.Role) == cardType)
