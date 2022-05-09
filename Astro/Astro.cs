@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Astro.Helper;
 using Dalamud;
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -39,6 +40,10 @@ namespace Astro
             if (!DalamudApi.ClientState.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
                 return;
 
+            var actionId = (uint) Marshal.ReadInt32(effectHeader, 8);
+            if(ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Spell, actionId) >= 1.1f)
+                return;
+
             if (AstrologianHelper.CurrentCard is AstrologianCard.None)
                 return;
 
@@ -49,9 +54,9 @@ namespace Astro
                 return;
             }
             
-            var actionId = AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard);
+            var cardId = AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard);
             var targetId = AstrologianHelper.GetOptimumTargetId(AstrologianHelper.CurrentCard);
-            AddQueueAction((IntPtr) ActionManager.Instance(), ActionType.Spell, actionId, targetId, 0);
+            AddQueueAction((IntPtr) ActionManager.Instance(), ActionType.Spell, cardId, targetId, 0);
         }
         
         private static void AddQueueAction(IntPtr actionManager, ActionType actionType, uint actionId, uint targetId, uint param) 
