@@ -44,7 +44,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FFXIVClientStructs-main\FFXIVClientStructs\FFXIVClientStructs.csproj" />
+    <ProjectReference Include="..\FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Lumina" Version="3.5.2" />

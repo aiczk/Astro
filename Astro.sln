@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Astro", "Astro\Astro.csproj", "{13C812E9-0D42-4B95-8646-40EEBF30636F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFXIVClientStructs", "FFXIVClientStructs-main\FFXIVClientStructs\FFXIVClientStructs.csproj", "{8A8E2581-610C-45C2-90D2-F8C4B3098CE1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFXIVClientStructs", "FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj", "{24332CED-A1E3-47B3-AE98-02B8E02BB157}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFXIVClientStructs.Generators", "FFXIVClientStructs-main\FFXIVClientStructs.Generators\FFXIVClientStructs.Generators.csproj", "{CC33DEA5-9F79-43DB-AC23-EEC41C217FB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFXIVClientStructs.Generators", "FFXIVClientStructs\FFXIVClientStructs.Generators\FFXIVClientStructs.Generators.csproj", "{9F273CC0-2296-4439-AEDE-0397F13B9AAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{13C812E9-0D42-4B95-8646-40EEBF30636F}.Debug|x64.Build.0 = Debug|x64
 		{13C812E9-0D42-4B95-8646-40EEBF30636F}.Release|x64.ActiveCfg = Release|x64
 		{13C812E9-0D42-4B95-8646-40EEBF30636F}.Release|x64.Build.0 = Release|x64
-		{8A8E2581-610C-45C2-90D2-F8C4B3098CE1}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{8A8E2581-610C-45C2-90D2-F8C4B3098CE1}.Debug|x64.Build.0 = Debug|Any CPU
-		{8A8E2581-610C-45C2-90D2-F8C4B3098CE1}.Release|x64.ActiveCfg = Release|Any CPU
-		{8A8E2581-610C-45C2-90D2-F8C4B3098CE1}.Release|x64.Build.0 = Release|Any CPU
-		{CC33DEA5-9F79-43DB-AC23-EEC41C217FB8}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{CC33DEA5-9F79-43DB-AC23-EEC41C217FB8}.Debug|x64.Build.0 = Debug|Any CPU
-		{CC33DEA5-9F79-43DB-AC23-EEC41C217FB8}.Release|x64.ActiveCfg = Release|Any CPU
-		{CC33DEA5-9F79-43DB-AC23-EEC41C217FB8}.Release|x64.Build.0 = Release|Any CPU
+		{24332CED-A1E3-47B3-AE98-02B8E02BB157}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{24332CED-A1E3-47B3-AE98-02B8E02BB157}.Debug|x64.Build.0 = Debug|Any CPU
+		{24332CED-A1E3-47B3-AE98-02B8E02BB157}.Release|x64.ActiveCfg = Release|Any CPU
+		{24332CED-A1E3-47B3-AE98-02B8E02BB157}.Release|x64.Build.0 = Release|Any CPU
+		{9F273CC0-2296-4439-AEDE-0397F13B9AAC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9F273CC0-2296-4439-AEDE-0397F13B9AAC}.Debug|x64.Build.0 = Debug|Any CPU
+		{9F273CC0-2296-4439-AEDE-0397F13B9AAC}.Release|x64.ActiveCfg = Release|Any CPU
+		{9F273CC0-2296-4439-AEDE-0397F13B9AAC}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
