@@ -30,14 +30,8 @@ namespace Astro.Helper
 
         private static readonly Dictionary<ArcanumType, List<string>> Weights = new()
         {
-            {
-                ArcanumType.Melee,
-                new List<string> { "DRG", "SAM", "NIN", "MNK", "RPR" }
-            },
-            {
-                ArcanumType.Range,
-                new List<string> { "BLM", "SMN", "MCH", "BRD", "RDM", "DNC" }
-            }
+            { ArcanumType.Melee, new List<string> { "DRG", "SAM", "NIN", "MNK", "RPR" } },
+            { ArcanumType.Range, new List<string> { "BLM", "SMN", "MCH", "BRD", "RDM", "DNC" } }
         };
 
         public static uint GetActionId(AstrologianCard card)
@@ -66,9 +60,10 @@ namespace Astro.Helper
                 // Don't die. UwU
                 var member = DalamudApi.PartyList
                     .Where(x => GetRole(x.ClassJob.GameData!.Role) == cardType)
+                    .Where(x => Weights[cardType].Exists(y => y == x.ClassJob.GameData!.Abbreviation.RawString))
                     .Where(x => !x.Statuses.Any(y => y.StatusId is >= 1882 and <= 1887 or 43 or 44))
                     .Where(x => x.Statuses.Any(y => y.GameData.Name.RawString != DamageDownString()))
-                    .OrderBy(x => Weights[cardType].IndexOf(x.ClassJob.GameData!.Abbreviation.RawString.ToUpper()))
+                    .OrderBy(x => Weights[cardType].IndexOf(x.ClassJob.GameData!.Abbreviation.RawString))
                     .FirstOrDefault();
 
                 if (member != null)
