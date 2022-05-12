@@ -35,6 +35,9 @@ namespace Astro
         {
             receiveAbilityHook.Original(sourceId, sourceCharacter, position, effectHeader, effectArray, effectTrail);
 
+            if(DalamudApi.ClientState.LocalPlayer?.ClassJob.GameData?.Abbreviation.RawString != "AST")
+                return;
+            
             if (DalamudApi.ClientState.LocalPlayer == null || DalamudApi.TargetManager.Target == null)
                 return;
 
