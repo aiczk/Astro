@@ -37,6 +37,7 @@ namespace Astro.Helper
         };
         
         private const uint Weakness = 43, BrinkOfDeath = 44;
+        private const int LoopLevel = 3;
 
         public static uint GetActionId(AstrologianCard card)
         {
@@ -58,10 +59,12 @@ namespace Astro.Helper
                 return DalamudApi.ClientState.LocalPlayer!.ObjectId;
 
             var cardType = GetCardType(CurrentCard);
+            var level = LoopLevel;
             while (true)
             {
-                // Maybe, If there is no one to deal the cards with, the game will crash.
-                // Don't die. UwU
+                if (level == 0)
+                    return DalamudApi.ClientState.LocalPlayer!.ObjectId;
+
                 var member = DalamudApi.PartyList
                     .Where(x => GetRole(x.ClassJob.GameData!.Role) == cardType)
                     .Where(x => Weights[cardType].Exists(y => y == x.ClassJob.GameData!.Abbreviation.RawString))
@@ -74,6 +77,7 @@ namespace Astro.Helper
                     return member.ObjectId;
 
                 cardType = cardType == ArcanumType.Melee ? ArcanumType.Range : ArcanumType.Melee;
+                level--;
             }
         }
 
