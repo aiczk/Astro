@@ -14,7 +14,9 @@ namespace Astro.Helper
 
         public static unsafe bool CheckDuplicateArcanum() =>
             JobGaugeManager.Instance()->Astrologian.CurrentSeals.Any(seal => Seals[CurrentCard] == seal);
-        
+
+        public const uint ExecutionOfRedraw = 2713, Redraw = 3593;
+
         private enum ArcanumType
         {
             Melee,
@@ -33,6 +35,8 @@ namespace Astro.Helper
             { ArcanumType.Melee, new List<string> { "DRG", "SAM", "NIN", "MNK", "RPR" } },
             { ArcanumType.Range, new List<string> { "BLM", "SMN", "MCH", "BRD", "RDM", "DNC" } }
         };
+        
+        private const uint Weakness = 43, BrinkOfDeath = 44;
 
         public static uint GetActionId(AstrologianCard card)
         {
@@ -48,12 +52,12 @@ namespace Astro.Helper
             };
         }
 
-        public static uint GetOptimumTargetId(AstrologianCard card)
+        public static uint GetOptimumTargetId()
         {
             if (DalamudApi.PartyList.Length == 0)
                 return DalamudApi.ClientState.LocalPlayer!.ObjectId;
 
-            var cardType = GetCardType(card);
+            var cardType = GetCardType(CurrentCard);
             while (true)
             {
                 // Maybe, If there is no one to deal the cards with, the game will crash.
@@ -61,7 +65,7 @@ namespace Astro.Helper
                 var member = DalamudApi.PartyList
                     .Where(x => GetRole(x.ClassJob.GameData!.Role) == cardType)
                     .Where(x => Weights[cardType].Exists(y => y == x.ClassJob.GameData!.Abbreviation.RawString))
-                    .Where(x => !x.Statuses.Any(y => y.StatusId is >= 1882 and <= 1887 or 43 or 44))
+                    .Where(x => !x.Statuses.Any(y => y.StatusId is >= 1882 and <= 1887 or Weakness or BrinkOfDeath))
                     .Where(x => x.Statuses.Any(y => y.GameData.Name.RawString != DamageDownString()))
                     .OrderBy(x => Weights[cardType].IndexOf(x.ClassJob.GameData!.Abbreviation.RawString))
                     .FirstOrDefault();

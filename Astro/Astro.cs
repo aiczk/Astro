@@ -37,30 +37,27 @@ namespace Astro
 
             if(DalamudApi.ClientState.LocalPlayer?.ClassJob.GameData?.Abbreviation.RawString != "AST")
                 return;
-            
-            if (DalamudApi.ClientState.LocalPlayer == null || DalamudApi.TargetManager.Target == null)
-                return;
 
             if (!DalamudApi.ClientState.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
                 return;
 
-            var totalGcd = MarshalHelper.ReadFloat((IntPtr)ActionManager.Instance() + 0x61C);
-            var elapsedGcd = MarshalHelper.ReadFloat((IntPtr)ActionManager.Instance() + 0x618);
+            SafeMemory.Read((IntPtr)ActionManager.Instance() + 0x61C, out float totalGcd);
+            SafeMemory.Read((IntPtr)ActionManager.Instance() + 0x618, out float elapsedGcd);
             if(totalGcd - elapsedGcd <= 1.4f)
                 return;
 
             if (AstrologianHelper.CurrentCard is AstrologianCard.None)
                 return;
 
-            var hasRedraw = DalamudApi.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == 2713);
+            var hasRedraw = DalamudApi.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == AstrologianHelper.ExecutionOfRedraw);
             if (hasRedraw && AstrologianHelper.CheckDuplicateArcanum())
             {
-                AddQueueAction((IntPtr)ActionManager.Instance(), ActionType.Spell, 3593, 0, 0);
+                AddQueueAction((IntPtr)ActionManager.Instance(), ActionType.Spell, AstrologianHelper.Redraw, 0, 0);
                 return;
             }
-            
+
             var cardId = AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard);
-            var targetId = AstrologianHelper.GetOptimumTargetId(AstrologianHelper.CurrentCard);
+            var targetId = AstrologianHelper.GetOptimumTargetId();
             AddQueueAction((IntPtr)ActionManager.Instance(), ActionType.Spell, cardId, targetId, 0);
         }
         
