@@ -1,8 +1,5 @@
-﻿#nullable enable
-using System;
-using System.Globalization;
+﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Astro.Helper;
 using Dalamud;
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -41,38 +38,24 @@ namespace Astro
             if (!DalamudApi.ClientState.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
                 return;
 
+            if (AstrologianHelper.CurrentCard is AstrologianCard.None)
+                return;
+
             SafeMemory.Read((IntPtr)ActionManager.Instance() + 0x61C, out float totalGcd);
             SafeMemory.Read((IntPtr)ActionManager.Instance() + 0x618, out float elapsedGcd);
             if(totalGcd - elapsedGcd <= 1.4f)
                 return;
 
-            if (AstrologianHelper.CurrentCard is AstrologianCard.None)
-                return;
-
             var hasRedraw = DalamudApi.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == AstrologianHelper.ExecutionOfRedraw);
             if (hasRedraw && AstrologianHelper.CheckDuplicateArcanum())
             {
-                AddQueueAction((IntPtr)ActionManager.Instance(), ActionType.Spell, AstrologianHelper.Redraw, 0, 0);
+                DalamudHelper.AddQueueAction(AstrologianHelper.Redraw, DalamudApi.TargetManager.Target?.ObjectId ?? 0);
                 return;
             }
 
             var cardId = AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard);
             var targetId = AstrologianHelper.GetOptimumTargetId();
-            AddQueueAction((IntPtr)ActionManager.Instance(), ActionType.Spell, cardId, targetId, 0);
-        }
-        
-        private static void AddQueueAction(IntPtr actionManager, ActionType actionType, uint actionId, uint targetId, uint param) 
-        {
-            SafeMemory.Read<bool>(actionManager + 0x68, out var inQueue);
-            if (!inQueue)
-                return;
-
-            SafeMemory.Write(actionManager + 0x68, true);
-            SafeMemory.Write(actionManager + 0x6C, (byte)actionType);
-            SafeMemory.Write(actionManager + 0x70, actionId);
-            SafeMemory.Write(actionManager + 0x78, targetId);
-            SafeMemory.Write(actionManager + 0x80, 0);
-            SafeMemory.Write(actionManager + 0x84, param);
+            DalamudHelper.AddQueueAction(cardId, targetId);
         }
 
         public void Dispose()

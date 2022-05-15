@@ -36,8 +36,9 @@ namespace Astro.Helper
             { ArcanumType.Range, new List<string> { "BLM", "SMN", "MCH", "BRD", "RDM", "DNC" } }
         };
         
+        private static readonly Random Random = new();
         private const uint Weakness = 43, BrinkOfDeath = 44;
-        private const int LoopLevel = 3;
+        private const int LoopLevel = 2;
 
         public static uint GetActionId(AstrologianCard card)
         {
@@ -59,12 +60,8 @@ namespace Astro.Helper
                 return DalamudApi.ClientState.LocalPlayer!.ObjectId;
 
             var cardType = GetCardType(CurrentCard);
-            var level = LoopLevel;
-            while (true)
+            for (var i = 0; i < LoopLevel; i++)
             {
-                if (level == 0)
-                    return DalamudApi.ClientState.LocalPlayer!.ObjectId;
-
                 var member = DalamudApi.PartyList
                     .Where(x => GetRole(x.ClassJob.GameData!.Role) == cardType)
                     .Where(x => Weights[cardType].Exists(y => y == x.ClassJob.GameData!.Abbreviation.RawString))
@@ -77,8 +74,9 @@ namespace Astro.Helper
                     return member.ObjectId;
 
                 cardType = cardType == ArcanumType.Melee ? ArcanumType.Range : ArcanumType.Melee;
-                level--;
             }
+            
+            return DalamudApi.PartyList[Random.Next(DalamudApi.PartyList.Length)]!.ObjectId;
         }
 
         private static ArcanumType GetRole(byte role)
