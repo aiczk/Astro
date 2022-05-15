@@ -6,7 +6,7 @@ Simplify the astrologian's operation.
 ## About
 Astro realizes the system by forcibly intervening in the action cue system.
 
-Therefore, the type-ahead may be invalidated, but please forgive me.
+Therefore, the oGCD may be invalidated, but please forgive me.
 
 ### Detail
 Players with a card effect, a weakness effect, or a damage down effect are skipped.
