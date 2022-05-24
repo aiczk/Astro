@@ -12,7 +12,10 @@ namespace Astro.Helper
         public static unsafe AstrologianCard CurrentCard =>
             JobGaugeManager.Instance()->Astrologian.CurrentCard & ~AstrologianCard.Lord & ~AstrologianCard.Lady;
 
-        public static unsafe bool CheckDuplicateArcanum() =>
+        public static unsafe bool IsAstroSignFilled =>
+            JobGaugeManager.Instance()->Astrologian.CurrentSeals.All(x => x != 0);
+
+        public static unsafe bool IsAstroSignDuplicated =>
             JobGaugeManager.Instance()->Astrologian.CurrentSeals.Any(seal => Seals[CurrentCard] == seal);
 
         public const uint ExecutionOfRedraw = 2713, Redraw = 3593;
@@ -38,7 +41,6 @@ namespace Astro.Helper
         
         private static readonly Random Random = new();
         private const uint Weakness = 43, BrinkOfDeath = 44;
-        private const int LoopLevel = 2;
 
         public static uint GetActionId(AstrologianCard card)
         {
@@ -60,7 +62,7 @@ namespace Astro.Helper
                 return DalamudApi.ClientState.LocalPlayer!.ObjectId;
 
             var cardType = GetCardType(CurrentCard);
-            for (var i = 0; i < LoopLevel; i++)
+            for (var i = 0; i < 2; i++)
             {
                 var member = DalamudApi.PartyList
                     .Where(x => GetRole(x.ClassJob.GameData!.Role) == cardType)

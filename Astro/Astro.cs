@@ -38,7 +38,7 @@ namespace Astro
             if (!DalamudApi.ClientState.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
                 return;
 
-            if (AstrologianHelper.CurrentCard is AstrologianCard.None)
+            if (AstrologianHelper.IsAstroSignFilled || AstrologianHelper.CurrentCard is AstrologianCard.None)
                 return;
 
             SafeMemory.Read((IntPtr)ActionManager.Instance() + 0x61C, out float totalGcd);
@@ -47,7 +47,7 @@ namespace Astro
                 return;
 
             var hasRedraw = DalamudApi.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == AstrologianHelper.ExecutionOfRedraw);
-            if (hasRedraw && AstrologianHelper.CheckDuplicateArcanum())
+            if (hasRedraw && AstrologianHelper.IsAstroSignDuplicated)
             {
                 DalamudHelper.AddQueueAction(AstrologianHelper.Redraw, DalamudApi.TargetManager.Target?.ObjectId ?? 0);
                 return;
