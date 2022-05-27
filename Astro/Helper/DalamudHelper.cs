@@ -11,6 +11,8 @@ namespace Astro.Helper
         public static unsafe void AddQueueAction(uint actionId, uint targetId) => 
             AddQueueAction((IntPtr)ActionManager.Instance(), ActionType.Spell, actionId, targetId, 0);
 
+        public static PlayerCharacter? LocalPlayer => DalamudApi.ClientState.LocalPlayer;
+
         private static void AddQueueAction(IntPtr actionManager, ActionType actionType, uint actionId, uint targetId, uint param) 
         {
             SafeMemory.Read<bool>(actionManager + 0x68, out var inQueue);

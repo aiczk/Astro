@@ -5,6 +5,7 @@ using Dalamud;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Hooking;
 using Dalamud.IoC;
+using Dalamud.Logging;
 using Dalamud.Plugin;
 using FFXIVClientStructs;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -23,8 +24,9 @@ namespace Astro
         {
             DalamudApi.Initialize(pluginInterface);
             Resolver.Initialize();
-            
-            receiveAbilityHook = new Hook<ReceiveAbilityDelegate>(DalamudApi.SigScanner.ScanText("4C 89 44 24 ?? 55 56 57 41 54 41 55 41 56 48 8D 6C 24 ??"), ReceiveAbilityEffectDetour);
+
+            var address = DalamudApi.SigScanner.ScanText("4C 89 44 24 ?? 55 56 57 41 54 41 55 41 56 48 8D 6C 24 ??");
+            receiveAbilityHook = new Hook<ReceiveAbilityDelegate>(address, ReceiveAbilityEffectDetour);
             receiveAbilityHook.Enable();
         }
 
@@ -32,10 +34,10 @@ namespace Astro
         {
             receiveAbilityHook.Original(sourceId, sourceCharacter, position, effectHeader, effectArray, effectTrail);
 
-            if(DalamudApi.ClientState.LocalPlayer?.ClassJob.GameData?.Abbreviation.RawString != "AST")
+            if(DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation.RawString != "AST")
                 return;
 
-            if (!DalamudApi.ClientState.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
+            if (!DalamudHelper.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
                 return;
 
             if (AstrologianHelper.IsAstroSignFilled || AstrologianHelper.CurrentCard is AstrologianCard.None)
@@ -46,7 +48,7 @@ namespace Astro
             if(totalGcd - elapsedGcd <= 1.4f)
                 return;
 
-            var hasRedraw = DalamudApi.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == AstrologianHelper.ExecutionOfRedraw);
+            var hasRedraw = DalamudHelper.LocalPlayer.StatusList.Any(x => x.StatusId == AstrologianHelper.ExecutionOfRedraw);
             if (hasRedraw && AstrologianHelper.IsAstroSignDuplicated)
             {
                 DalamudHelper.AddQueueAction(AstrologianHelper.Redraw, DalamudApi.TargetManager.Target?.ObjectId ?? 0);
