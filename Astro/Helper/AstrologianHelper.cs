@@ -18,7 +18,13 @@ namespace Astro.Helper
         public static unsafe bool IsAstroSignDuplicated =>
             JobGaugeManager.Instance()->Astrologian.CurrentSeals.Any(seal => Seals[CurrentCard] == seal);
 
-        public const uint ExecutionOfRedraw = 2713, Redraw = 3593;
+        public static unsafe bool IsDivinationExecutable => 
+            ActionManager.Instance()->GetActionStatus(ActionType.Spell, Divination) == 0;
+        
+        public static bool HasRedraw => DalamudHelper.LocalPlayer!.StatusList.Any(x => x.StatusId == ExecutionOfRedraw);
+        
+        public const uint Redraw = 3593, Play = 17055;
+        private const uint ExecutionOfRedraw = 2713, Divination = 16552;
 
         private enum ArcanumType
         {

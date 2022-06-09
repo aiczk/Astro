@@ -10,7 +10,7 @@ namespace Astro;
 public class Configuration : IPluginConfiguration
 {
     public int Version { get; set; } = 0;
-    public HashSet<uint> Abilities = new();
+    public bool EnableDivination = true, EnableAutoPlay = true, EnableAutoRedraw = true;
 
     public void Save() => DalamudApi.PluginInterface.SavePluginConfig(this);
 }
