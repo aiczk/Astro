@@ -19,7 +19,7 @@ namespace Astro.Helper
             JobGaugeManager.Instance()->Astrologian.CurrentSeals.Any(seal => Seals[CurrentCard] == seal);
 
         public static unsafe bool IsDivinationExecutable => 
-            ActionManager.Instance()->GetActionStatus(ActionType.Spell, Divination) == 0;
+            !ActionManager.Instance()->IsRecastTimerActive(ActionType.Spell, Divination);
         
         public static bool HasRedraw => DalamudHelper.LocalPlayer!.StatusList.Any(x => x.StatusId == ExecutionOfRedraw);
         

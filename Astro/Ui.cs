@@ -22,7 +22,7 @@ public class Ui : IUi
 
     void IUi.Draw()
     {
-        if (!visible || !ImGui.Begin("Astro", ref visible))
+        if (!visible || !ImGui.Begin("Astro", ref visible, ImGuiWindowFlags.AlwaysAutoResize))
             return;
 
         if (ImGui.Checkbox("Enable auto play", ref configuration.EnableAutoPlay))
