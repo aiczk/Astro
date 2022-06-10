@@ -47,8 +47,11 @@ namespace Astro
                 return;
 
             if (configuration.EnableDivination)
+            {
                 if (AstrologianHelper.IsDivinationExecutable)
                     return;
+                return;
+            }
 
             if (AstrologianHelper.IsAstroSignFilled || AstrologianHelper.CurrentCard is AstrologianCard.None)
                 return;
