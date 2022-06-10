@@ -46,12 +46,8 @@ namespace Astro
             if(DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation.RawString != "AST" || !DalamudHelper.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
                 return;
 
-            if (configuration.EnableDivination)
-            {
-                if (AstrologianHelper.IsDivinationExecutable)
-                    return;
+            if (configuration.EnableDivination && AstrologianHelper.IsDivinationExecutable)
                 return;
-            }
 
             if (AstrologianHelper.IsAstroSignFilled || AstrologianHelper.CurrentCard is AstrologianCard.None)
                 return;
