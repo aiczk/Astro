@@ -54,7 +54,7 @@ namespace Astro
 
             SafeMemory.Read((IntPtr)ActionManager.Instance() + 0x61C, out float totalGcd);
             SafeMemory.Read((IntPtr)ActionManager.Instance() + 0x618, out float elapsedGcd);
-            if(totalGcd - elapsedGcd <= 1.4f)
+            if(totalGcd - elapsedGcd <= 1.3f)
                 return;
 
             if (configuration.EnableAutoRedraw && AstrologianHelper.HasRedraw && AstrologianHelper.IsAstroSignDuplicated)
@@ -75,7 +75,7 @@ namespace Astro
         {
             var tryAction = HookHelper.Get<Functions.TryAction>();
             
-            if(actionId != AstrologianHelper.Play)
+            if(actionId != AstrologianHelper.Play || AstrologianHelper.CurrentCard is AstrologianCard.None)
                 return tryAction(actionManager, actionType, actionId, targetId, param, origin, unknown, location);
             
             if (configuration.EnableAutoRedraw && AstrologianHelper.HasRedraw && AstrologianHelper.IsAstroSignDuplicated)
