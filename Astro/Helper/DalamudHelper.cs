@@ -30,7 +30,7 @@ namespace Astro.Helper
         public static unsafe int GetActionChargeCount(uint actionId, int maxChargeCount, int chargeTime)
         {
             var recast = ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Spell, actionId);
-            return (int)Math.Round(recast == 0 ? maxChargeCount : recast / chargeTime);
+            return (int)Math.Floor(recast == 0 ? maxChargeCount : recast / chargeTime);
         }
 
         public static void RegisterCommand(string cmdName, string helpMessage, CommandInfo.HandlerDelegate cmdHandler)
