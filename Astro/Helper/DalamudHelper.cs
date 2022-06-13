@@ -10,9 +10,7 @@ namespace Astro.Helper
     public static class DalamudHelper
     {
         public static PlayerCharacter? LocalPlayer => DalamudApi.ClientState.LocalPlayer;
-
-        public static unsafe bool IsRecastTimerActive(uint actionId) => !ActionManager.Instance()->IsRecastTimerActive(ActionType.Spell, actionId);
-
+        
         public static unsafe void AddQueueAction(uint actionId, uint targetId) => AddQueueAction((IntPtr)ActionManager.Instance(), ActionType.Spell, actionId, targetId, 0);
 
         private static void AddQueueAction(IntPtr actionManager, ActionType actionType, uint actionId, uint targetId, uint param) 
@@ -27,6 +25,12 @@ namespace Astro.Helper
             SafeMemory.Write(actionManager + 0x78, targetId);
             SafeMemory.Write(actionManager + 0x80, 0);
             SafeMemory.Write(actionManager + 0x84, param);
+        }
+
+        public static unsafe int GetActionChargeCount(uint actionId, int maxChargeCount, int chargeTime)
+        {
+            var recast = ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Spell, actionId);
+            return (int)Math.Round(recast == 0 ? maxChargeCount : recast / chargeTime);
         }
 
         public static void RegisterCommand(string cmdName, string helpMessage, CommandInfo.HandlerDelegate cmdHandler)

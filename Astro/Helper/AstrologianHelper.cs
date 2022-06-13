@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Dalamud;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -9,6 +10,12 @@ namespace Astro.Helper
 {
     public static class AstrologianHelper
     {
+        private enum ArcanumType
+        {
+            Melee,
+            Range
+        }
+        
         public static unsafe AstrologianCard CurrentCard =>
             JobGaugeManager.Instance()->Astrologian.CurrentCard & ~AstrologianCard.Lord & ~AstrologianCard.Lady;
 
@@ -17,20 +24,18 @@ namespace Astro.Helper
 
         public static unsafe bool IsAstroSignDuplicated =>
             JobGaugeManager.Instance()->Astrologian.CurrentSeals.Any(seal => Seals[CurrentCard] == seal);
+        
+        public static bool IsCardChargeCountMax => DalamudHelper.GetActionChargeCount(Draw, 2, 30) == 2;
 
-        public static unsafe bool IsDivinationExecutable => 
-            !ActionManager.Instance()->IsRecastTimerActive(ActionType.Spell, Divination);
+        public static bool HasRedrawInStatusList => 
+            DalamudHelper.LocalPlayer!.StatusList.Any(x => x.StatusId == RedrawExecutableInStatus);
         
-        public static bool HasRedraw => DalamudHelper.LocalPlayer!.StatusList.Any(x => x.StatusId == ExecutionOfRedraw);
-        
+        public static bool HasDivinationInStatusList => 
+            DalamudHelper.LocalPlayer!.StatusList.Any(x => x.StatusId == DivinationInStatus);
+
         public const uint Redraw = 3593, Play = 17055;
-        private const uint ExecutionOfRedraw = 2713, Divination = 16552;
-
-        private enum ArcanumType
-        {
-            Melee,
-            Range
-        }
+        private const uint Draw = 3590;
+        private const uint RedrawExecutableInStatus = 2713, DivinationInStatus = 1878;
 
         private static readonly Dictionary<AstrologianCard, AstrologianSeal> Seals = new()
         {

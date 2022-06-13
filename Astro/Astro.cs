@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using Astro.Helper;
 using Dalamud;
@@ -43,10 +44,7 @@ namespace Astro
         {
             HookHelper.Get<Functions.ReceiveAbility>()(sourceId, sourceCharacter, position, effectHeader, effectArray, effectTrail);
 
-            if(DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation.RawString != "AST" || !DalamudHelper.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
-                return;
-
-            if (configuration.EnableDivination && AstrologianHelper.IsDivinationExecutable)
+            if (DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation.RawString != "AST" || !DalamudHelper.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
                 return;
 
             if (AstrologianHelper.IsAstroSignFilled || AstrologianHelper.CurrentCard is AstrologianCard.None)
@@ -54,21 +52,28 @@ namespace Astro
 
             SafeMemory.Read((IntPtr)ActionManager.Instance() + 0x61C, out float totalGcd);
             SafeMemory.Read((IntPtr)ActionManager.Instance() + 0x618, out float elapsedGcd);
-            if(totalGcd - elapsedGcd <= 1.3f)
+            if (totalGcd - elapsedGcd <= 1.3f)
                 return;
 
-            if (configuration.EnableAutoRedraw && AstrologianHelper.HasRedraw && AstrologianHelper.IsAstroSignDuplicated)
+            if (configuration.EnableAutoRedraw && AstrologianHelper.HasRedrawInStatusList && AstrologianHelper.IsAstroSignDuplicated)
             {
                 DalamudHelper.AddQueueAction(AstrologianHelper.Redraw, DalamudApi.TargetManager.Target?.ObjectId ?? 0);
                 return;
             }
             
+            if (configuration.EnableBurstCard && !AstrologianHelper.HasDivinationInStatusList && AstrologianHelper.CurrentCard is not AstrologianCard.None)
+            {
+                if(!AstrologianHelper.IsCardChargeCountMax)
+                    return;
+                
+                DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId());
+                return;
+            }
+
             if(!configuration.EnableAutoPlay)
                 return;
 
-            var cardId = AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard);
-            var targetId = AstrologianHelper.GetOptimumTargetId();
-            DalamudHelper.AddQueueAction(cardId, targetId);
+            DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId());
         }
         
         private bool TryActionDetour(IntPtr actionManager, ActionType actionType, uint actionId, ulong targetId, uint param, uint origin, uint unknown, void* location)
@@ -78,7 +83,7 @@ namespace Astro
             if(actionId != AstrologianHelper.Play || AstrologianHelper.CurrentCard is AstrologianCard.None)
                 return tryAction(actionManager, actionType, actionId, targetId, param, origin, unknown, location);
             
-            if (configuration.EnableAutoRedraw && AstrologianHelper.HasRedraw && AstrologianHelper.IsAstroSignDuplicated)
+            if (configuration.EnableAutoRedraw && AstrologianHelper.HasRedrawInStatusList && AstrologianHelper.IsAstroSignDuplicated)
                 return tryAction(actionManager, actionType, AstrologianHelper.Redraw, targetId, param, origin, unknown, location);
 
             var cardId = AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard);
