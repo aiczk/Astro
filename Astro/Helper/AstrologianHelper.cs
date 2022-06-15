@@ -46,8 +46,8 @@ namespace Astro.Helper
 
         private static readonly Dictionary<ArcanumType, List<string>> Weights = new()
         {
-            { ArcanumType.Melee, new List<string> { "DRG", "SAM", "NIN", "MNK", "RPR" } },
-            { ArcanumType.Range, new List<string> { "BLM", "SMN", "MCH", "BRD", "RDM", "DNC" } }
+            { ArcanumType.Melee, DalamudApi.Configuration.MeleePriority },
+            { ArcanumType.Range, DalamudApi.Configuration.RangePriority }
         };
         
         private static readonly Random Random = new();

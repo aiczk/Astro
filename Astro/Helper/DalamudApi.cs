@@ -46,5 +46,6 @@ namespace Astro.Helper
         [PluginService][RequiredVersion("1.0")] public static ObjectTable ObjectTable { get; private set; } = null;
         [PluginService][RequiredVersion("1.0")] public static FateTable FateTable { get; private set; } = null;
         [PluginService][RequiredVersion("1.0")] public static LibcFunction LibcFunction { get; private set; } = null;
+        public static Configuration Configuration { get; set; }
     }
 }
