@@ -41,7 +41,7 @@ public class Ui : IUi
         ImGui.Separator();
         ImGui.Text("Range card priority");
         ReordableList(DalamudApi.Configuration.RangePriority);
-        ImGui.TextWrapped("If you are missing a Class Job, please add the Abbreviation of the desired job to the \"(Melee|Range)Priority\" in %%appdata%%\\XIVLauncher\\pluginConfig\\Astro.json.");
+        ImGui.TextWrapped("If you are missing a Class Job, please add the Abbreviation of the desired job to the \"(Melee|Range)Priority\" in %%appdata%%\\XIVLauncher\\pluginConfigs\\Astro.json.");
 
         ImGui.End();
     }

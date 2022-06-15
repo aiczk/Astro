@@ -14,8 +14,8 @@ public class Configuration : IPluginConfiguration
 
     public void Init()
     {
-        MeleePriority = MeleePriority.Count == 0 ? new List<string> { "DRG", "SAM", "NIN", "MNK", "RPR" } : MeleePriority;
-        RangePriority = RangePriority.Count == 0 ? new List<string> { "BLM", "SMN", "MCH", "BRD", "RDM", "DNC" } : RangePriority;
+        MeleePriority = MeleePriority.Count == 0 ? new List<string> { "SAM", "DRK", "MNK", "NIN", "RPR", "DRG" } : MeleePriority;
+        RangePriority = RangePriority.Count == 0 ? new List<string> { "BLM", "DNC", "SMN", "MCH", "BRD", "RDM" } : RangePriority;
     }
 
     public void Save() => DalamudApi.PluginInterface.SavePluginConfig(this);
