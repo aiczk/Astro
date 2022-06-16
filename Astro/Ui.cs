@@ -36,10 +36,10 @@ public class Ui : IUi
         }
 
         ImGui.Separator();
-        ImGui.Text("Melee card priority");
+        ImGui.Text("Melee card priority (drag and drop to re-order)");
         ReordableList(DalamudApi.Configuration.MeleePriority);
         ImGui.Separator();
-        ImGui.Text("Range card priority");
+        ImGui.Text("Range card priority (drag and drop to re-order)");
         ReordableList(DalamudApi.Configuration.RangePriority);
         ImGui.TextWrapped("If you are missing a Class Job, please add the Abbreviation of the desired job to the \"(Melee|Range)Priority\" in %%appdata%%\\XIVLauncher\\pluginConfigs\\Astro.json.");
 
@@ -52,11 +52,12 @@ public class Ui : IUi
         {
             ImGui.Text($"{i + 1}.");
             ImGui.SameLine();
-            ImGui.Button($"{list[i]}", new Vector2(ImGui.GetWindowWidth() - 45, 20));
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth());
+            ImGui.Selectable($"{list[i]}");
 
             if (ImGui.BeginDragDropSource())
             {
-                ImGui.Text($"Selected {list[i]}");
+                ImGui.Text($"Selecting {list[i]}");
                 ImGui.SetDragDropPayload("Index", (IntPtr)(&i), sizeof(int));
                 ImGui.EndDragDropSource();
             }
