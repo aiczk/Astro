@@ -27,6 +27,10 @@ public class Ui : IUi
 
         Checkbox("Enable auto play", ref DalamudApi.Configuration.EnableAutoPlay);
         Checkbox("Enable auto redraw", ref DalamudApi.Configuration.EnableAutoRedraw);
+        Checkbox("Enable manual redraw", ref DalamudApi.Configuration.EnableManualRedraw);
+        if (ImGui.IsItemHovered())
+            ImGui.SetTooltip("When the play button is pressed when the Seal is not aligned, it is converted to a redraw and execute.");
+
         Checkbox("Deal three cards at burst", ref DalamudApi.Configuration.EnableBurstCard);
         if (ImGui.IsItemHovered())
         {
@@ -34,6 +38,11 @@ public class Ui : IUi
             ImGui.SetTooltip("Auto play will not work except when the card charge count reaches 2 or while executing Divination!");
             ImGui.PopStyleColor();
         }
+        
+        if(DalamudApi.Configuration.EnableBurstCard)
+            if (Checkbox("Treat cards as in burst while divination is close to being ready", ref DalamudApi.Configuration.IsDivinationCloseToReady))
+                if (ImGui.SliderInt("Seconds ago", ref DalamudApi.Configuration.DivinationRange, 1, 5))
+                    DalamudApi.Configuration.Save();
 
         ImGui.BeginTabBar("tabbar");
         if (ImGui.BeginTabItem("In Burst"))
@@ -98,10 +107,12 @@ public class Ui : IUi
         }
     }
 
-    private void Checkbox(string label, ref bool value)
+    private bool Checkbox(string label, ref bool value)
     {
         if (ImGui.Checkbox(label, ref value))
             DalamudApi.Configuration.Save();
+
+        return value;
     }
 
     private static void Tooltip(string tooltip)

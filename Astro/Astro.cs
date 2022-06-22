@@ -63,9 +63,15 @@ namespace Astro
             
             if (DalamudApi.Configuration.EnableBurstCard && !AstrologianHelper.HasDivinationInStatusList && AstrologianHelper.CurrentCard is not AstrologianCard.None)
             {
-                if(!AstrologianHelper.IsCardChargeCountMax)
+                if (DalamudApi.Configuration.IsDivinationCloseToReady && AstrologianHelper.IsDivinationCloseToReady)
+                {
+                    DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId());
                     return;
+                }
                 
+                if (!AstrologianHelper.IsCardChargeCountMax)
+                    return;
+
                 DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId());
                 return;
             }
@@ -79,12 +85,15 @@ namespace Astro
         private static bool TryActionDetour(IntPtr actionManager, ActionType actionType, uint actionId, ulong targetId, uint param, uint origin, uint unknown, void* location)
         {
             var tryAction = HookHelper.Get<Functions.TryAction>();
-            
-            if(actionId != AstrologianHelper.Play || AstrologianHelper.CurrentCard is AstrologianCard.None)
-                return tryAction(actionManager, actionType, actionId, targetId, param, origin, unknown, location);
-            
-            if (DalamudApi.Configuration.EnableAutoRedraw && AstrologianHelper.HasRedrawInStatusList && AstrologianHelper.IsAstroSignDuplicated)
+
+            if (DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation != "AST" || !DalamudHelper.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
                 return tryAction(actionManager, actionType, AstrologianHelper.Redraw, targetId, param, origin, unknown, location);
+            
+            if (DalamudApi.Configuration.EnableManualRedraw && AstrologianHelper.HasRedrawInStatusList && AstrologianHelper.IsAstroSignDuplicated)
+                return tryAction(actionManager, actionType, AstrologianHelper.Redraw, targetId, param, origin, unknown, location);
+            
+            if (actionId != AstrologianHelper.Play || AstrologianHelper.CurrentCard is AstrologianCard.None)
+                return tryAction(actionManager, actionType, actionId, targetId, param, origin, unknown, location);
 
             var cardId = AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard);
             var optimumTargetId = AstrologianHelper.GetOptimumTargetId();

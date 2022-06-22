@@ -9,8 +9,9 @@ namespace Astro;
 public class Configuration : IPluginConfiguration
 {
     public int Version { get; set; } = 0;
-    public bool EnableAutoPlay = true, EnableAutoRedraw = true, EnableBurstCard = false;
+    public bool EnableAutoPlay = true, EnableAutoRedraw = true, EnableBurstCard = false, IsDivinationCloseToReady = false, EnableManualRedraw = false;
     public List<string> MeleePriority = new(), RangePriority = new(), MeleeBurstPriority = new (), RangeBurstPriority = new();
+    public int DivinationRange = 5;
 
     private static readonly List<string> MeleeList = new() { "SAM", "DRK", "MNK", "NIN", "RPR", "DRG" },
                                          RangeList = new () { "BLM", "DNC", "SMN", "MCH", "BRD", "RDM" };
