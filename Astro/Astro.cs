@@ -87,7 +87,7 @@ namespace Astro
             var tryAction = HookHelper.Get<Functions.TryAction>();
 
             if (DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation != "AST" || !DalamudHelper.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
-                return tryAction(actionManager, actionType, AstrologianHelper.Redraw, targetId, param, origin, unknown, location);
+                return tryAction(actionManager, actionType, actionId, targetId, param, origin, unknown, location);
             
             if (DalamudApi.Configuration.EnableManualRedraw && AstrologianHelper.HasRedrawInStatusList && AstrologianHelper.IsAstroSignDuplicated)
                 return tryAction(actionManager, actionType, AstrologianHelper.Redraw, targetId, param, origin, unknown, location);
