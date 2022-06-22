@@ -44,7 +44,7 @@ namespace Astro
         {
             HookHelper.Get<Functions.ReceiveAbility>()(sourceId, sourceCharacter, position, effectHeader, effectArray, effectTrail);
 
-            if (DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation.RawString != "AST" || !DalamudHelper.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
+            if (DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation != "AST" || !DalamudHelper.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
                 return;
 
             if (AstrologianHelper.IsAstroSignFilled || AstrologianHelper.CurrentCard is AstrologianCard.None)

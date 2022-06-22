@@ -10,10 +10,12 @@ namespace Astro.Helper
 {
     public static class AstrologianHelper
     {
+        [Flags]
         private enum ArcanumType
         {
-            Melee,
-            Range
+            Melee = 1 << 0,
+            Range = 1 << 1,
+            Burst = 1 << 2
         }
         
         public static unsafe AstrologianCard CurrentCard =>
@@ -47,7 +49,9 @@ namespace Astro.Helper
         private static readonly Dictionary<ArcanumType, List<string>> Weights = new()
         {
             { ArcanumType.Melee, DalamudApi.Configuration.MeleePriority },
-            { ArcanumType.Range, DalamudApi.Configuration.RangePriority }
+            { ArcanumType.Range, DalamudApi.Configuration.RangePriority },
+            { ArcanumType.Melee | ArcanumType.Burst, DalamudApi.Configuration.MeleeBurstPriority },
+            { ArcanumType.Range | ArcanumType.Burst, DalamudApi.Configuration.RangeBurstPriority }
         };
         
         private static readonly Random Random = new();
@@ -72,15 +76,15 @@ namespace Astro.Helper
             if (DalamudApi.PartyList.Length == 0)
                 return DalamudApi.ClientState.LocalPlayer!.ObjectId;
 
-            var cardType = GetCardType(CurrentCard);
+            var cardType = HasDivinationInStatusList ? GetCardType(CurrentCard) | ArcanumType.Burst : GetCardType(CurrentCard);
             for (var i = 0; i < 2; i++)
             {
                 var member = DalamudApi.PartyList
-                    .Where(x => GetRole(x.ClassJob.GameData!.Role) == cardType)
-                    .Where(x => Weights[cardType].Exists(y => y == x.ClassJob.GameData!.Abbreviation.RawString))
+                    .Where(x => GetRole(x.ClassJob.GameData?.Role ?? 0) == cardType)
+                    .Where(x => Weights[cardType].Exists(y => y == x.ClassJob.GameData?.Abbreviation))
                     .Where(x => !x.Statuses.Any(y => y.StatusId is >= 1882 and <= 1887 or Weakness or BrinkOfDeath))
-                    .Where(x => x.Statuses.Any(y => y.GameData.Name.RawString != DamageDownString()))
-                    .OrderBy(x => Weights[cardType].IndexOf(x.ClassJob.GameData!.Abbreviation.RawString))
+                    .Where(x => x.Statuses.All(y => y.GameData.Name != DamageDownString()))
+                    .OrderBy(x => Weights[cardType].IndexOf(x.ClassJob.GameData?.Abbreviation))
                     .FirstOrDefault();
 
                 if (member != null)
@@ -119,11 +123,14 @@ namespace Astro.Helper
             }
         }
 
-        private static ArcanumType GetCardType(AstrologianCard arcanum) => arcanum switch
+        private static ArcanumType GetCardType(AstrologianCard arcanum)
         {
-            AstrologianCard.Balance or AstrologianCard.Arrow or AstrologianCard.Spear => ArcanumType.Melee,
-            AstrologianCard.Bole or AstrologianCard.Ewer or AstrologianCard.Spire => ArcanumType.Range,
-            _ => throw new ArgumentOutOfRangeException(nameof(arcanum), arcanum, null)
-        };
+            return arcanum switch
+            {
+                AstrologianCard.Balance or AstrologianCard.Arrow or AstrologianCard.Spear => ArcanumType.Melee,
+                AstrologianCard.Bole or AstrologianCard.Ewer or AstrologianCard.Spire => ArcanumType.Range,
+                _ => throw new ArgumentOutOfRangeException(nameof(arcanum), arcanum, null)
+            };
+        }
     }
 }

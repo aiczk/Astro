@@ -35,14 +35,31 @@ public class Ui : IUi
             ImGui.PopStyleColor();
         }
 
-        ImGui.Separator();
-        ImGui.Text("Melee card priority (drag and drop to re-order)");
-        ReordableList(DalamudApi.Configuration.MeleePriority);
-        ImGui.Separator();
-        ImGui.Text("Range card priority (drag and drop to re-order)");
-        ReordableList(DalamudApi.Configuration.RangePriority);
-        ImGui.TextWrapped("If you are missing a Class Job, please add the Abbreviation of the desired job to the \"(Melee|Range)Priority\" in %%appdata%%\\XIVLauncher\\pluginConfigs\\Astro.json.");
+        ImGui.BeginTabBar("tabbar");
+        if (ImGui.BeginTabItem("In Burst"))
+        {
+            ImGui.Separator();
+            ImGui.Text("Melee card priority (drag and drop to re-order)");
+            ReordableList(DalamudApi.Configuration.MeleeBurstPriority);
+            ImGui.Separator();
+            ImGui.Text("Range card priority (drag and drop to re-order)");
+            ReordableList(DalamudApi.Configuration.RangeBurstPriority);
+            ImGui.EndTabItem();
+        }
 
+        if (ImGui.BeginTabItem("Outside of Burst"))
+        {
+            ImGui.Separator();
+            ImGui.Text("Melee card priority (drag and drop to re-order)");
+            ReordableList(DalamudApi.Configuration.MeleePriority);
+            ImGui.Separator();
+            ImGui.Text("Range card priority (drag and drop to re-order)");
+            ReordableList(DalamudApi.Configuration.RangePriority);   
+            ImGui.EndTabItem();
+        }
+        ImGui.TextWrapped("If you are missing a Class Job, please add the Abbreviation of the desired job to the \"(Melee|Range)Priority\" in %%appdata%%\\XIVLauncher\\pluginConfigs\\Astro.json");
+
+        ImGui.EndTabBar();
         ImGui.End();
     }
     

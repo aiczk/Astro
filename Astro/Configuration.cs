@@ -10,12 +10,17 @@ public class Configuration : IPluginConfiguration
 {
     public int Version { get; set; } = 0;
     public bool EnableAutoPlay = true, EnableAutoRedraw = true, EnableBurstCard = false;
-    public List<string> MeleePriority = new(), RangePriority = new();
+    public List<string> MeleePriority = new(), RangePriority = new(), MeleeBurstPriority = new (), RangeBurstPriority = new();
+
+    private static readonly List<string> MeleeList = new() { "SAM", "DRK", "MNK", "NIN", "RPR", "DRG" },
+                                         RangeList = new () { "BLM", "DNC", "SMN", "MCH", "BRD", "RDM" };
 
     public void Init()
     {
-        MeleePriority = MeleePriority.Count == 0 ? new List<string> { "SAM", "DRK", "MNK", "NIN", "RPR", "DRG" } : MeleePriority;
-        RangePriority = RangePriority.Count == 0 ? new List<string> { "BLM", "DNC", "SMN", "MCH", "BRD", "RDM" } : RangePriority;
+        MeleePriority = MeleePriority.Count == 0 ? MeleeList : MeleePriority;
+        RangePriority = RangePriority.Count == 0 ? RangeList : RangePriority;
+        MeleeBurstPriority = MeleeBurstPriority.Count == 0 ? MeleeList : MeleeBurstPriority;
+        RangeBurstPriority = RangeBurstPriority.Count == 0 ? RangeList : RangeBurstPriority;
     }
 
     public void Save() => DalamudApi.PluginInterface.SavePluginConfig(this);
