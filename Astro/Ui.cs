@@ -39,10 +39,9 @@ public class Ui : IUi
             ImGui.PopStyleColor();
         }
         
-        if(DalamudApi.Configuration.EnableBurstCard)
-            if (Checkbox("Treat cards as in burst while divination is close to being ready", ref DalamudApi.Configuration.IsDivinationCloseToReady))
-                if (ImGui.SliderInt("Seconds ago", ref DalamudApi.Configuration.DivinationRange, 1, 5))
-                    DalamudApi.Configuration.Save();
+        if (Checkbox("Treat cards as in burst while divination is close to being ready", ref DalamudApi.Configuration.IsDivinationCloseToReady)) 
+            if (ImGui.SliderInt("Seconds ago", ref DalamudApi.Configuration.DivinationRange, 1, 5)) 
+                DalamudApi.Configuration.Save();
 
         ImGui.BeginTabBar("tabbar");
         if (ImGui.BeginTabItem("In Burst"))

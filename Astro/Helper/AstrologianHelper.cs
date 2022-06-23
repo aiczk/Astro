@@ -31,10 +31,10 @@ namespace Astro.Helper
         
         public static bool IsCardChargeCountMax => DalamudHelper.GetActionChargeCount(Draw, 2, 30) == 2;
 
-        public static bool HasRedrawInStatusList => 
+        public static bool IsRedrawInStatusList => 
             DalamudHelper.LocalPlayer!.StatusList.Any(x => x.StatusId == RedrawExecutableInStatus);
         
-        public static bool HasDivinationInStatusList => 
+        public static bool IsDivinationInStatusList => 
             DalamudHelper.LocalPlayer!.StatusList.Any(x => x.StatusId == DivinationInStatus);
 
         public const uint Redraw = 3593, Play = 17055;
@@ -78,7 +78,7 @@ namespace Astro.Helper
             if (DalamudApi.PartyList.Length == 0)
                 return DalamudApi.ClientState.LocalPlayer!.ObjectId;
 
-            var cardType = HasDivinationInStatusList ? GetCardType(CurrentCard) | ArcanumType.Burst : GetCardType(CurrentCard);
+            var cardType = IsDivinationInStatusList ? GetCardType(CurrentCard) | ArcanumType.Burst : GetCardType(CurrentCard);
             for (var i = 0; i < 2; i++)
             {
                 var member = DalamudApi.PartyList

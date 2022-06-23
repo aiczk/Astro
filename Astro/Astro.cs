@@ -55,20 +55,20 @@ namespace Astro
             if (totalGcd - elapsedGcd <= 1.3f)
                 return;
 
-            if (DalamudApi.Configuration.EnableAutoRedraw && AstrologianHelper.HasRedrawInStatusList && AstrologianHelper.IsAstroSignDuplicated)
+            if (DalamudApi.Configuration.EnableAutoRedraw && AstrologianHelper.IsRedrawInStatusList && AstrologianHelper.IsAstroSignDuplicated)
             {
                 DalamudHelper.AddQueueAction(AstrologianHelper.Redraw, DalamudApi.TargetManager.Target?.ObjectId ?? 0);
                 return;
             }
             
-            if (DalamudApi.Configuration.EnableBurstCard && !AstrologianHelper.HasDivinationInStatusList && AstrologianHelper.CurrentCard is not AstrologianCard.None)
+            if (DalamudApi.Configuration.IsDivinationCloseToReady && AstrologianHelper.IsDivinationCloseToReady)
             {
-                if (DalamudApi.Configuration.IsDivinationCloseToReady && AstrologianHelper.IsDivinationCloseToReady)
-                {
-                    DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId());
-                    return;
-                }
-                
+                DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId());
+                return;
+            }
+            
+            if (DalamudApi.Configuration.EnableBurstCard && AstrologianHelper.IsDivinationInStatusList)
+            {
                 if (!AstrologianHelper.IsCardChargeCountMax)
                     return;
 
@@ -76,7 +76,7 @@ namespace Astro
                 return;
             }
 
-            if(!DalamudApi.Configuration.EnableAutoPlay)
+            if (!DalamudApi.Configuration.EnableAutoPlay)
                 return;
 
             DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId());
@@ -89,7 +89,7 @@ namespace Astro
             if (DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation != "AST" || !DalamudHelper.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
                 return tryAction(actionManager, actionType, actionId, targetId, param, origin, unknown, location);
             
-            if (DalamudApi.Configuration.EnableManualRedraw && AstrologianHelper.HasRedrawInStatusList && AstrologianHelper.IsAstroSignDuplicated)
+            if (DalamudApi.Configuration.EnableManualRedraw && AstrologianHelper.IsRedrawInStatusList && AstrologianHelper.IsAstroSignDuplicated)
                 return tryAction(actionManager, actionType, AstrologianHelper.Redraw, targetId, param, origin, unknown, location);
             
             if (actionId != AstrologianHelper.Play || AstrologianHelper.CurrentCard is AstrologianCard.None)

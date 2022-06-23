@@ -13,7 +13,7 @@ public class Configuration : IPluginConfiguration
     public List<string> MeleePriority = new(), RangePriority = new(), MeleeBurstPriority = new (), RangeBurstPriority = new();
     public int DivinationRange = 5;
 
-    private static readonly List<string> MeleeList = new() { "SAM", "DRK", "MNK", "NIN", "RPR", "DRG" },
+    private static readonly List<string> MeleeList = new () { "SAM", "DRK", "MNK", "NIN", "RPR", "DRG" },
                                          RangeList = new () { "BLM", "DNC", "SMN", "MCH", "BRD", "RDM" };
 
     public void Init()
