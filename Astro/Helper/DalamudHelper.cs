@@ -11,13 +11,13 @@ namespace Astro.Helper
     {
         public static PlayerCharacter? LocalPlayer => DalamudApi.ClientState.LocalPlayer;
         
-        public static unsafe void AddQueueAction(uint actionId, uint targetId) => AddQueueAction((IntPtr)ActionManager.Instance(), ActionType.Spell, actionId, targetId, 0);
+        public static unsafe bool AddQueueAction(uint actionId, uint targetId) => AddQueueAction((IntPtr)ActionManager.Instance(), ActionType.Spell, actionId, targetId, 0);
 
-        private static void AddQueueAction(IntPtr actionManager, ActionType actionType, uint actionId, uint targetId, uint param) 
+        private static bool AddQueueAction(IntPtr actionManager, ActionType actionType, uint actionId, uint targetId, uint param) 
         {
             SafeMemory.Read<bool>(actionManager + 0x68, out var inQueue);
             if (!inQueue)
-                return;
+                return false;
 
             SafeMemory.Write(actionManager + 0x68, true);
             SafeMemory.Write(actionManager + 0x6C, (byte)actionType);
@@ -25,6 +25,7 @@ namespace Astro.Helper
             SafeMemory.Write(actionManager + 0x78, targetId);
             SafeMemory.Write(actionManager + 0x80, 0);
             SafeMemory.Write(actionManager + 0x84, param);
+            return true;
         }
 
         public static unsafe int GetActionChargeCount(uint actionId, int maxChargeCount, int chargeTime)

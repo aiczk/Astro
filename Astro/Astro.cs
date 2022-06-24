@@ -67,7 +67,7 @@ namespace Astro
                 return;
             }
             
-            if (DalamudApi.Configuration.EnableBurstCard && AstrologianHelper.IsDivinationInStatusList)
+            if (DalamudApi.Configuration.EnableBurstCard && !AstrologianHelper.IsDivinationInStatusList)
             {
                 if (!AstrologianHelper.IsCardChargeCountMax)
                     return;
