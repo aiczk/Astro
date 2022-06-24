@@ -26,7 +26,7 @@ namespace Astro
 
         string IDalamudPlugin.Name => "Astro";
         private const string CommandName = "/astro";
-        private readonly Subject<Unit> subject = new();
+        private readonly Subject<Unit> abilitySubject = new();
         private readonly CompositeDisposable compositeDisposable = new();
 
         public Astro([RequiredVersion("1.0")] DalamudPluginInterface pluginInterface)
@@ -39,14 +39,11 @@ namespace Astro
             
             DalamudApi.Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             DalamudApi.Configuration.Init();
-            
-            IUi ui = new Ui();
-            DalamudHelper.RegisterCommand(CommandName, "Open config window for Astro.", (_, _) => ui.Visible = true);
-            DalamudApi.PluginInterface.UiBuilder.Draw += ui.Draw;
-            DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += () => ui.Visible = true;
 
-            var parent = subject
-                .Where(_ => DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation == "AST" && DalamudHelper.LocalPlayer.StatusFlags.HasFlag(StatusFlags.InCombat))
+            var parent = abilitySubject
+                .Where(_ => DalamudApi.Configuration.AstroStatus)
+                .Where(_ => DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation == "AST")
+                .Where(_ => DalamudHelper.LocalPlayer?.StatusFlags.HasFlag(StatusFlags.InCombat) ?? false)
                 .Where(_ => !AstrologianHelper.IsAstroSignFilled)
                 .Where(_ =>
                 {
@@ -55,28 +52,45 @@ namespace Astro
                     return !(totalGcd - elapsedGcd <= 1.3f);
                 });
 
-            var redraw = parent
-                .Where(_ => DalamudApi.Configuration.EnableAutoRedraw && AstrologianHelper.IsRedrawInStatusList && AstrologianHelper.IsAstroSignDuplicated)
-                .Subscribe(_ => DalamudHelper.AddQueueAction(AstrologianHelper.Redraw, DalamudApi.TargetManager.Target?.ObjectId ?? 0));
+            parent
+                .Where(_ => DalamudApi.Configuration.EnableAutoRedraw)
+                .Where(_ => AstrologianHelper.IsRedrawInStatusList)
+                .Where(_ => AstrologianHelper.IsAstroSignDuplicated)
+                .Subscribe(_ => DalamudHelper.AddQueueAction(AstrologianHelper.Redraw, DalamudApi.TargetManager.Target?.ObjectId ?? 0))
+                .AddTo(compositeDisposable);
             
-            var merge = Observable
+            Observable
                 .Merge
                 (
-                    parent.Where(_ => DalamudApi.Configuration.IsDivinationCloseToReady && AstrologianHelper.IsDivinationCloseToReady),
-                    parent.Where(_ => DalamudApi.Configuration.EnableBurstCard && AstrologianHelper.IsDivinationInStatusList),
-                    parent.Where(_ => DalamudApi.Configuration.AvoidOverflowingCards && AstrologianHelper.IsCardChargeCountMax),
+                    parent.Where(_ => DalamudApi.Configuration.IsDivinationCloseToReady).Where(_ => AstrologianHelper.IsDivinationCloseToReady),
+                    parent.Where(_ => DalamudApi.Configuration.EnableBurstCard).Where(_ => AstrologianHelper.IsDivinationInStatusList),
+                    parent.Where(_ => DalamudApi.Configuration.AvoidOverflowingCards).Where(_ => AstrologianHelper.IsCardChargeCountMax),
                     parent.Where(_ => DalamudApi.Configuration.EnableAutoPlay)
                 )
-                .Subscribe(_ => DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId()));
+                .Subscribe(_ => DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId()))
+                .AddTo(compositeDisposable);
             
-            compositeDisposable.Add(redraw);
-            compositeDisposable.Add(merge);
+            
+            IUi ui = new Ui();
+            DalamudApi.PluginInterface.UiBuilder.Draw += ui.Draw;
+            DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += () => ui.Visible = true;
+            DalamudHelper.RegisterCommand(CommandName, "Open config window for Astro.\n/astro on → Enable Astro\n/astro off → Disable Astro\n/astro toggle → Toggle Astro status", (_, arguments) =>
+            {
+                if (arguments == "") ui.Visible = true;
+                DalamudApi.Configuration.AstroStatus = arguments switch
+                {
+                    "off" => true,
+                    "on" => false,
+                    "toggle" => !DalamudApi.Configuration.AstroStatus,
+                    _ => DalamudApi.Configuration.AstroStatus,
+                };
+            });
         }
 
         private void ReceiveAbilityDetour(uint sourceId, IntPtr sourceCharacter, IntPtr position, IntPtr effectHeader, IntPtr effectArray, IntPtr effectTrail)
         {
             HookHelper.Get<Functions.ReceiveAbility>()(sourceId, sourceCharacter, position, effectHeader, effectArray, effectTrail);
-            subject.OnNext(Unit.Default); 
+            abilitySubject.OnNext(Unit.Default); 
         }
         
         private static bool TryActionDetour(IntPtr actionManager, ActionType actionType, uint actionId, ulong targetId, uint param, uint origin, uint unknown, void* location)
@@ -92,7 +106,7 @@ namespace Astro
             if (actionId != AstrologianHelper.Play || AstrologianHelper.CurrentCard is AstrologianCard.None)
                 return tryAction(actionManager, actionType, actionId, targetId, param, origin, unknown, location);
 
-            if (DalamudApi.Configuration.EnableManualPlay)
+            if (!DalamudApi.Configuration.EnableManualPlay)
                 return tryAction(actionManager, actionType, actionId, targetId, param, origin, unknown, location);
             
             var cardId = AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard);
@@ -105,7 +119,7 @@ namespace Astro
             DalamudApi.CommandManager.RemoveHandler(CommandName);
             HookHelper.Disable<Functions.ReceiveAbility>();
             HookHelper.Disable<Functions.TryAction>();
-            subject.Dispose();
+            abilitySubject.Dispose();
             compositeDisposable.Dispose();
             GC.SuppressFinalize(this);
         }

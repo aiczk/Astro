@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Reactive.Disposables;
 using Dalamud;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Command;
@@ -43,5 +44,6 @@ namespace Astro.Helper
             DalamudApi.CommandManager.AddHandler(cmdName, cmdInfo);
         }
         
+        public static void AddTo(this IDisposable disposable, CompositeDisposable compositeDisposable) => compositeDisposable.Add(disposable);
     }
 }

@@ -13,10 +13,11 @@ public class Configuration : IPluginConfiguration
     public bool EnableAutoPlay = true,
         EnableAutoRedraw = true,
         EnableBurstCard = false,
-        EnableManualRedraw = false,
-        EnableManualPlay = false,
+        EnableManualRedraw = true,
+        EnableManualPlay = true,
         AvoidOverflowingCards = false,
-        IsDivinationCloseToReady = false;
+        IsDivinationCloseToReady = false,
+        AstroStatus = true;
     
     public List<string> MeleePriority = new(), RangePriority = new(), MeleeBurstPriority = new (), RangeBurstPriority = new();
     public int DivinationRange = 5;
