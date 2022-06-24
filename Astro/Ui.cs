@@ -24,26 +24,38 @@ public class Ui : IUi
     {
         if (!visible || !ImGui.Begin("Astro", ref visible))
             return;
-
-        Checkbox("Enable auto play", ref DalamudApi.Configuration.EnableAutoPlay);
-        Checkbox("Enable auto redraw", ref DalamudApi.Configuration.EnableAutoRedraw);
-        Checkbox("Enable manual redraw", ref DalamudApi.Configuration.EnableManualRedraw);
-        if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("When the play button is pressed when the Seal is not aligned, it is converted to a redraw and execute.");
-
-        Checkbox("Deal three cards at burst", ref DalamudApi.Configuration.EnableBurstCard);
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.PushStyleColor(ImGuiCol.Text, Red);
-            ImGui.SetTooltip("Auto play will not work except when the card charge count reaches 2 or while executing Divination!");
-            ImGui.PopStyleColor();
-        }
         
-        if (Checkbox("Treat cards as in burst while divination is close to being ready", ref DalamudApi.Configuration.IsDivinationCloseToReady)) 
-            if (ImGui.SliderInt("Seconds ago", ref DalamudApi.Configuration.DivinationRange, 1, 5)) 
-                DalamudApi.Configuration.Save();
+        ImGui.BeginTabBar("tab-option");
+        if (ImGui.BeginTabItem("Auto Option"))
+        {
+            Checkbox("Enable auto play", ref DalamudApi.Configuration.EnableAutoPlay);
+            Checkbox("Enable auto redraw", ref DalamudApi.Configuration.EnableAutoRedraw);
+            Checkbox("Avoid overflowing cards", ref DalamudApi.Configuration.AvoidOverflowingCards);
+            ImGui.EndTabItem();
+        }
+        if (ImGui.BeginTabItem("Manual Option"))
+        {
+            Checkbox("Enable manual play", ref DalamudApi.Configuration.EnableManualPlay);
+            Tooltip("Manually select who you want to play.");
+            Checkbox("Enable manual redraw", ref DalamudApi.Configuration.EnableManualRedraw);
+            Tooltip("When the play button is pressed when the Seal is not aligned, it is converted to a redraw and execute.");
+            ImGui.EndTabItem();
+        }
+        if (ImGui.BeginTabItem("Burst Option"))
+        {
+            Checkbox("Deal three cards at burst", ref DalamudApi.Configuration.EnableBurstCard);
+            ImGui.PushStyleColor(ImGuiCol.Text, Red);
+            Tooltip("Auto play will not work except when the card charge count reaches 2 or while executing Divination!");
+            ImGui.PopStyleColor();
+            
+            if (Checkbox("Deal the cards n seconds before the burst", ref DalamudApi.Configuration.IsDivinationCloseToReady))
+                if (ImGui.SliderInt("Seconds ago", ref DalamudApi.Configuration.DivinationRange, 1, 5))
+                    DalamudApi.Configuration.Save();
+            ImGui.EndTabItem();
+        }
+        ImGui.EndTabBar();
 
-        ImGui.BeginTabBar("tabbar");
+        ImGui.BeginTabBar("tab-burst");
         if (ImGui.BeginTabItem("In Burst"))
         {
             ImGui.Separator();
