@@ -59,17 +59,24 @@ namespace Astro
                 .Subscribe(_ => DalamudHelper.AddQueueAction(AstrologianHelper.Redraw, DalamudApi.TargetManager.Target?.ObjectId ?? 0))
                 .AddTo(compositeDisposable);
             
-            Observable
-                .Merge
-                (
-                    parent.Where(_ => DalamudApi.Configuration.EnableAutoPlay),
-                    parent.Where(_ => DalamudApi.Configuration.IsDivinationCloseToReady).Where(_ => AstrologianHelper.IsDivinationCloseToReady),
-                    parent.Where(_ => DalamudApi.Configuration.EnableBurstCard).Where(_ => AstrologianHelper.IsDivinationInStatusList || AstrologianHelper.IsCardChargeCountMax)
-                )
+            parent
+                .Where(_ => DalamudApi.Configuration.EnableAutoPlay)
                 .Subscribe(_ => DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId()))
                 .AddTo(compositeDisposable);
             
+            parent
+                .Where(_ => DalamudApi.Configuration.IsDivinationCloseToReady)
+                .Where(_ => AstrologianHelper.IsDivinationCloseToReady)
+                .Subscribe(_ => DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId()))
+                .AddTo(compositeDisposable);
             
+            parent
+                .Where(_ => DalamudApi.Configuration.EnableBurstCard)
+                .Where(_ => AstrologianHelper.IsDivinationInStatusList || AstrologianHelper.IsCardChargeCountMax)
+                .Subscribe(_ => DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId()))
+                .AddTo(compositeDisposable);
+
+
             IUi ui = new Ui();
             DalamudApi.PluginInterface.UiBuilder.Draw += ui.Draw;
             DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += () => ui.Visible = true;
