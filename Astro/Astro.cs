@@ -43,7 +43,7 @@ namespace Astro
             var parent = abilitySubject
                 .Where(_ => DalamudApi.Configuration.AstroStatus)
                 .Where(_ => DalamudHelper.LocalPlayer?.ClassJob.GameData?.Abbreviation == "AST")
-                .Where(_ => DalamudHelper.LocalPlayer?.StatusFlags.HasFlag(StatusFlags.InCombat) ?? false)
+                .Where(_ => DalamudHelper.LocalPlayer!.StatusFlags.HasFlag(StatusFlags.InCombat))
                 .Where(_ => !AstrologianHelper.IsAstroSignFilled)
                 .Where(_ =>
                 {
@@ -63,8 +63,7 @@ namespace Astro
                 .Merge
                 (
                     parent.Where(_ => DalamudApi.Configuration.IsDivinationCloseToReady).Where(_ => AstrologianHelper.IsDivinationCloseToReady),
-                    parent.Where(_ => DalamudApi.Configuration.EnableBurstCard).Where(_ => AstrologianHelper.IsDivinationInStatusList),
-                    parent.Where(_ => DalamudApi.Configuration.AvoidOverflowingCards).Where(_ => AstrologianHelper.IsCardChargeCountMax),
+                    parent.Where(_ => DalamudApi.Configuration.EnableBurstCard).Where(_ => AstrologianHelper.IsDivinationInStatusList || AstrologianHelper.IsCardChargeCountMax),
                     parent.Where(_ => DalamudApi.Configuration.EnableAutoPlay)
                 )
                 .Subscribe(_ => DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId()))
@@ -79,8 +78,8 @@ namespace Astro
                 if (arguments == "") ui.Visible = true;
                 DalamudApi.Configuration.AstroStatus = arguments switch
                 {
-                    "off" => true,
-                    "on" => false,
+                    "off" => false,
+                    "on" => true,
                     "toggle" => !DalamudApi.Configuration.AstroStatus,
                     _ => DalamudApi.Configuration.AstroStatus,
                 };

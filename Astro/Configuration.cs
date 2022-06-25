@@ -15,7 +15,6 @@ public class Configuration : IPluginConfiguration
         EnableBurstCard = false,
         EnableManualRedraw = true,
         EnableManualPlay = true,
-        AvoidOverflowingCards = false,
         IsDivinationCloseToReady = false,
         AstroStatus = true;
     

@@ -30,7 +30,6 @@ public class Ui : IUi
         ImGui.Separator();
         Checkbox("Enable auto play", ref DalamudApi.Configuration.EnableAutoPlay);
         Checkbox("Enable auto redraw", ref DalamudApi.Configuration.EnableAutoRedraw);
-        Checkbox("Avoid overflowing cards", ref DalamudApi.Configuration.AvoidOverflowingCards);
         ImGui.Separator();
             
         Checkbox("Enable manual play", ref DalamudApi.Configuration.EnableManualPlay);
