@@ -28,7 +28,14 @@ public class Ui : IUi
         Checkbox("Toggle Astro status", ref DalamudApi.Configuration.AstroStatus);
         Tooltip("ON to enable, OFF to disable.");
         ImGui.Separator();
-        Checkbox("Enable auto play", ref DalamudApi.Configuration.EnableAutoPlay);
+        if (Checkbox("Enable auto play", ref DalamudApi.Configuration.EnableAutoPlay))
+        {
+            DalamudApi.Configuration.EnableBurstCard = false;
+            DalamudApi.Configuration.Save();
+        }
+        ImGui.PushStyleColor(ImGuiCol.Text, Red);
+        Tooltip("Conflict: \"Deal three cards at burst\"");
+        ImGui.PopStyleColor();
         Checkbox("Enable auto redraw", ref DalamudApi.Configuration.EnableAutoRedraw);
         ImGui.Separator();
             
@@ -37,10 +44,14 @@ public class Ui : IUi
         Checkbox("Enable manual redraw", ref DalamudApi.Configuration.EnableManualRedraw);
         Tooltip("When a play is executed when the seals are not aligned, it is converted to redraw and executed.");
         ImGui.Separator();
-            
-        Checkbox("Deal three cards at burst", ref DalamudApi.Configuration.EnableBurstCard);
+
+        if (Checkbox("Deal three cards at burst", ref DalamudApi.Configuration.EnableBurstCard))
+        {
+            DalamudApi.Configuration.EnableAutoPlay = false;
+            DalamudApi.Configuration.Save();
+        }
         ImGui.PushStyleColor(ImGuiCol.Text, Red);
-        Tooltip("Auto play will not work except when the card charge count reaches 2 or while executing Divination!");
+        Tooltip("Auto play will not work except when the card charge count reaches 2 or while executing Divination!\nConflict: \"Enable auto play\"");
         ImGui.PopStyleColor();
         if (Checkbox("Deal the cards n seconds before the burst", ref DalamudApi.Configuration.IsDivinationCloseToReady))
             if (ImGui.SliderInt("Seconds ago", ref DalamudApi.Configuration.DivinationRange, 1, 5))
