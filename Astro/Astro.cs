@@ -64,9 +64,17 @@ namespace Astro
             Observable
                 .Merge
                 (
-                    parent.Where(_ => DalamudApi.Configuration.EnableAutoPlay),
-                    parent.Where(_ => DalamudApi.Configuration.IsDivinationCloseToReady).Where(_ => AstrologianHelper.IsDivinationCloseToReady),
-                    parent.Where(_ => DalamudApi.Configuration.EnableBurstCard).Where(_ => AstrologianHelper.IsDivinationInStatusList || AstrologianHelper.IsCardChargeCountMax)
+                    parent
+                        .Where(_ => DalamudApi.Configuration.EnableAutoPlay),
+                    parent
+                        .Where(_ => DalamudApi.Configuration.EnableBurstCard)
+                        .Where(_ => AstrologianHelper.IsDivinationInStatusList),
+                    parent
+                        .Where(_ => DalamudApi.Configuration.EnableNSecBeforeBurst)
+                        .Where(_ => AstrologianHelper.IsDivinationCloseToReady),
+                    parent
+                        .Where(_ => DalamudApi.Configuration.EnableNSecMiniBurst)
+                        .Where(_ => AstrologianHelper.IsDrawCloseToReady)
                 )
                 .Subscribe(_ => DalamudHelper.AddQueueAction(AstrologianHelper.GetActionId(AstrologianHelper.CurrentCard), AstrologianHelper.GetOptimumTargetId()))
                 .AddTo(compositeDisposable);

@@ -15,7 +15,8 @@ public class Configuration : IPluginConfiguration
         EnableBurstCard = false,
         EnableManualRedraw = true,
         EnableManualPlay = true,
-        IsDivinationCloseToReady = false,
+        EnableNSecMiniBurst = true,
+        EnableNSecBeforeBurst = true,
         AstroStatus = true;
 
     public List<string>
@@ -30,7 +31,7 @@ public class Configuration : IPluginConfiguration
         MeleeList = new() { "SAM", "DRK", "MNK", "NIN", "RPR", "DRG" },
         RangeList = new() { "BLM", "DNC", "SMN", "MCH", "BRD", "RDM" };
     
-    public int DivinationRange = 5;
+    public int BurstRange = 5, MiniBurstRange = 5;
 
     public void Init()
     {

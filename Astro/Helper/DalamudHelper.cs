@@ -28,6 +28,12 @@ namespace Astro.Helper
             SafeMemory.Write(actionManager + 0x84, param);
             return true;
         }
+        
+        public static unsafe float GetActionRecast(uint actionId, int chargeTime)
+        {
+            var recast = ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Spell, actionId);
+            return recast == 0 ? 0 : chargeTime - recast;
+        }
 
         public static unsafe double GetActionChargeCount(uint actionId, int maxChargeCount, int chargeTime)
         {

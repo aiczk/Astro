@@ -29,18 +29,19 @@ namespace Astro.Helper
             JobGaugeManager.Instance()->Astrologian.CurrentSeals.Any(seal => Seals[CurrentCard] == seal);
 
         public static bool IsDivinationCloseToReady => 
-            (RecastTimeElapsed(Divination) == 0 ? 120 : RecastTimeElapsed(Divination)) >= 120 - DalamudApi.Configuration.DivinationRange;
-        
-        public static bool IsCardChargeCountMax => DalamudHelper.GetActionChargeCount(Draw, 2, 30) >= 2;
+            DalamudHelper.GetActionRecast(Divination, 120) <= DalamudApi.Configuration.BurstRange;
 
+        public static bool IsDrawCloseToReady =>
+            DalamudHelper.GetActionRecast(Draw, 60) <= DalamudApi.Configuration.MiniBurstRange;
+        
         public static bool IsRedrawInStatusList => 
             DalamudHelper.LocalPlayer!.StatusList.Any(x => x.StatusId == RedrawExecutableInStatus);
         
         public static bool IsDivinationInStatusList => 
             DalamudHelper.LocalPlayer!.StatusList.Any(x => x.StatusId == DivinationInStatus);
 
-        public const uint Redraw = 3593, Play = 17055;
-        private const uint Draw = 3590, Divination = 16552;
+        public const uint Redraw = 3593, Play = 17055, Draw = 3590;
+        private const uint Divination = 16552;
         private const uint RedrawExecutableInStatus = 2713, DivinationInStatus = 1878;
 
         private static readonly Dictionary<AstrologianCard, AstrologianSeal> Seals = new()
@@ -79,15 +80,17 @@ namespace Astro.Helper
 
         public static uint GetOptimumTargetId()
         {
-            if (DalamudApi.PartyList.Length == 0)
-                return DalamudApi.ClientState.LocalPlayer!.ObjectId;
-            
             var cardType = GetCardType(CurrentCard);
             if (IsDivinationInStatusList)
                 cardType |= ArcanumType.Burst;
-            
-            if (IsCardChargeCountMax && !IsDivinationCloseToReady)
+
+            if (IsDrawCloseToReady && !IsDivinationCloseToReady)
                 cardType |= ArcanumType.MiniBurst;
+            
+            DalamudApi.ChatGui.Print(cardType.ToString("F"));
+
+            if (DalamudApi.PartyList.Length == 0)
+                return DalamudApi.ClientState.LocalPlayer!.ObjectId;
 
             for (var i = 0; i < 2; i++)
             {

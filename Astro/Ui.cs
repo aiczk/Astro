@@ -55,8 +55,12 @@ public class Ui : IUi
         ImGui.PushStyleColor(ImGuiCol.Text, Red);
         Tooltip("Auto play will not work except when the card charge count reaches 2 or while executing Divination!\nConflict: \"Enable auto play\"");
         ImGui.PopStyleColor();
-        if (Checkbox("Deal the cards n seconds before the burst", ref DalamudApi.Configuration.IsDivinationCloseToReady))
-            if (ImGui.SliderInt("Seconds ago", ref DalamudApi.Configuration.DivinationRange, 1, 5))
+        if (Checkbox("Deal the cards n seconds before the burst", ref DalamudApi.Configuration.EnableNSecBeforeBurst))
+            if (ImGui.SliderInt("Seconds ago##Burst", ref DalamudApi.Configuration.BurstRange, 1, 10))
+                DalamudApi.Configuration.Save();
+        
+        if (Checkbox("Deal the cards n seconds before the mini burst", ref DalamudApi.Configuration.EnableNSecMiniBurst))
+            if (ImGui.SliderInt("Seconds ago##MiniBurst", ref DalamudApi.Configuration.MiniBurstRange, 1, 10))
                 DalamudApi.Configuration.Save();
         
         ImGui.BeginTabBar("tab-burst");
