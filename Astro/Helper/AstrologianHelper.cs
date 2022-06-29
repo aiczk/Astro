@@ -80,17 +80,15 @@ namespace Astro.Helper
 
         public static uint GetOptimumTargetId()
         {
+            if (DalamudApi.PartyList.Length == 0)
+                return DalamudApi.ClientState.LocalPlayer!.ObjectId;
+            
             var cardType = GetCardType(CurrentCard);
             if (IsDivinationInStatusList)
                 cardType |= ArcanumType.Burst;
 
             if (IsDrawCloseToReady && !IsDivinationCloseToReady)
                 cardType |= ArcanumType.MiniBurst;
-            
-            DalamudApi.ChatGui.Print(cardType.ToString("F"));
-
-            if (DalamudApi.PartyList.Length == 0)
-                return DalamudApi.ClientState.LocalPlayer!.ObjectId;
 
             for (var i = 0; i < 2; i++)
             {
