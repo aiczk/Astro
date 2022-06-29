@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Astro.Helper;
+using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
 
 namespace Astro;
@@ -60,7 +62,6 @@ public class Ui : IUi
         ImGui.BeginTabBar("tab-burst");
         if (ImGui.BeginTabItem("In Burst"))
         {
-            ImGui.Separator();
             ImGui.Text("Melee card priority (drag and drop to re-order)");
             ReordableList(DalamudApi.Configuration.MeleeBurstPriority);
             ImGui.Separator();
@@ -69,9 +70,18 @@ public class Ui : IUi
             ImGui.EndTabItem();
         }
 
+        if (ImGui.BeginTabItem("Mini Burst"))
+        {
+            ImGui.Text("Melee card priority (drag and drop to re-order)");
+            ReordableList(DalamudApi.Configuration.MeleeMiniBurstPriority);
+            ImGui.Separator();
+            ImGui.Text("Range card priority (drag and drop to re-order)");
+            ReordableList(DalamudApi.Configuration.RangeMiniBurstPriority);
+            ImGui.EndTabItem();
+        }
+
         if (ImGui.BeginTabItem("Outside of Burst"))
         {
-            ImGui.Separator();
             ImGui.Text("Melee card priority (drag and drop to re-order)");
             ReordableList(DalamudApi.Configuration.MeleePriority);
             ImGui.Separator();
@@ -84,7 +94,7 @@ public class Ui : IUi
         ImGui.End();
     }
     
-    private static unsafe void ReordableList(List<string> list)
+    private static unsafe void ReordableList(IList<string> list)
     {
         for (var i = 0; i < list.Count; i++)
         {

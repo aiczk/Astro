@@ -17,17 +17,27 @@ public class Configuration : IPluginConfiguration
         EnableManualPlay = true,
         IsDivinationCloseToReady = false,
         AstroStatus = true;
-    
-    public List<string> MeleePriority = new(), RangePriority = new(), MeleeBurstPriority = new (), RangeBurstPriority = new();
-    public int DivinationRange = 5;
 
-    private static readonly List<string> MeleeList = new () { "SAM", "DRK", "MNK", "NIN", "RPR", "DRG" },
-                                         RangeList = new () { "BLM", "DNC", "SMN", "MCH", "BRD", "RDM" };
+    public List<string>
+        MeleePriority = new(),
+        RangePriority = new(),
+        MeleeMiniBurstPriority = new(),
+        RangeMiniBurstPriority = new(),
+        MeleeBurstPriority = new(),
+        RangeBurstPriority = new();
+    
+    private static readonly List<string>
+        MeleeList = new() { "SAM", "DRK", "MNK", "NIN", "RPR", "DRG" },
+        RangeList = new() { "BLM", "DNC", "SMN", "MCH", "BRD", "RDM" };
+    
+    public int DivinationRange = 5;
 
     public void Init()
     {
         MeleePriority = MeleePriority.Count == 0 ? MeleeList : MeleePriority;
         RangePriority = RangePriority.Count == 0 ? RangeList : RangePriority;
+        MeleeMiniBurstPriority = MeleeMiniBurstPriority.Count == 0 ? MeleeList : MeleeMiniBurstPriority;
+        RangeMiniBurstPriority = RangeMiniBurstPriority.Count == 0 ? RangeList : RangeMiniBurstPriority;
         MeleeBurstPriority = MeleeBurstPriority.Count == 0 ? MeleeList : MeleeBurstPriority;
         RangeBurstPriority = RangeBurstPriority.Count == 0 ? RangeList : RangeBurstPriority;
     }

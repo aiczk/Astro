@@ -29,10 +29,10 @@ namespace Astro.Helper
             return true;
         }
 
-        public static unsafe int GetActionChargeCount(uint actionId, int maxChargeCount, int chargeTime)
+        public static unsafe double GetActionChargeCount(uint actionId, int maxChargeCount, int chargeTime)
         {
             var recast = ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Spell, actionId);
-            return (int)Math.Floor(recast == 0 ? maxChargeCount : recast / chargeTime);
+            return Math.Round(recast == 0 ? maxChargeCount : recast / chargeTime, 1);
         }
 
         public static void RegisterCommand(string cmdName, string helpMessage, CommandInfo.HandlerDelegate cmdHandler)

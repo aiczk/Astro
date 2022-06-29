@@ -15,7 +15,8 @@ namespace Astro.Helper
         {
             Melee = 1 << 0,
             Range = 1 << 1,
-            Burst = 1 << 2
+            Burst = 1 << 2,
+            MiniBurst = 1 << 3,
         }
         
         public static unsafe AstrologianCard CurrentCard =>
@@ -27,9 +28,10 @@ namespace Astro.Helper
         public static unsafe bool IsAstroSignDuplicated =>
             JobGaugeManager.Instance()->Astrologian.CurrentSeals.Any(seal => Seals[CurrentCard] == seal);
 
-        public static bool IsDivinationCloseToReady => (RecastTimeElapsed(Divination) == 0 ? 120 : RecastTimeElapsed(Divination)) >= 120 - DalamudApi.Configuration.DivinationRange;
+        public static bool IsDivinationCloseToReady => 
+            (RecastTimeElapsed(Divination) == 0 ? 120 : RecastTimeElapsed(Divination)) >= 120 - DalamudApi.Configuration.DivinationRange;
         
-        public static bool IsCardChargeCountMax => DalamudHelper.GetActionChargeCount(Draw, 2, 30) == 2;
+        public static bool IsCardChargeCountMax => DalamudHelper.GetActionChargeCount(Draw, 2, 30) >= 2;
 
         public static bool IsRedrawInStatusList => 
             DalamudHelper.LocalPlayer!.StatusList.Any(x => x.StatusId == RedrawExecutableInStatus);
@@ -52,6 +54,8 @@ namespace Astro.Helper
         {
             { ArcanumType.Melee, DalamudApi.Configuration.MeleePriority },
             { ArcanumType.Range, DalamudApi.Configuration.RangePriority },
+            { ArcanumType.Melee | ArcanumType.MiniBurst, DalamudApi.Configuration.MeleeMiniBurstPriority },
+            { ArcanumType.Range | ArcanumType.MiniBurst, DalamudApi.Configuration.RangeMiniBurstPriority },
             { ArcanumType.Melee | ArcanumType.Burst, DalamudApi.Configuration.MeleeBurstPriority },
             { ArcanumType.Range | ArcanumType.Burst, DalamudApi.Configuration.RangeBurstPriority }
         };
@@ -77,8 +81,14 @@ namespace Astro.Helper
         {
             if (DalamudApi.PartyList.Length == 0)
                 return DalamudApi.ClientState.LocalPlayer!.ObjectId;
+            
+            var cardType = GetCardType(CurrentCard);
+            if (IsDivinationInStatusList)
+                cardType |= ArcanumType.Burst;
+            
+            if (IsCardChargeCountMax && !IsDivinationCloseToReady)
+                cardType |= ArcanumType.MiniBurst;
 
-            var cardType = IsDivinationInStatusList ? GetCardType(CurrentCard) | ArcanumType.Burst : GetCardType(CurrentCard);
             for (var i = 0; i < 2; i++)
             {
                 var member = DalamudApi.PartyList
