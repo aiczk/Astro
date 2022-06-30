@@ -97,11 +97,15 @@ namespace Astro.Helper
                     .Where(x => Weights[cardType].Exists(y => y == x.ClassJob.GameData?.Abbreviation))
                     .Where(x => !x.Statuses.Any(y => y.StatusId is >= 1882 and <= 1887 or Weakness or BrinkOfDeath))
                     .Where(x => x.Statuses.All(y => y.GameData.Name != DamageDownString()))
-                    .OrderBy(x => Weights[cardType].IndexOf(x.ClassJob.GameData?.Abbreviation))
-                    .FirstOrDefault();
+                    .FirstOrDefault(x => Weights[cardType].Exists(y => y == x.ClassJob.GameData?.Abbreviation));
 
                 if (member != null)
+                {
+                    if(DalamudApi.Configuration.ShowDebugMessage)
+                        DalamudApi.ChatGui.Print($"{cardType} => {member.ClassJob.GameData?.Abbreviation ?? "none"}");
+                    
                     return member.ObjectId;
+                }
 
                 cardType = cardType == ArcanumType.Melee ? ArcanumType.Range : ArcanumType.Melee;
             }

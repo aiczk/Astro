@@ -28,6 +28,7 @@ public class Ui : IUi
             return;
 
         Checkbox("Toggle Astro status", ref DalamudApi.Configuration.AstroStatus);
+        Checkbox("Show Debug Message", ref DalamudApi.Configuration.ShowDebugMessage);
         Tooltip("ON to enable, OFF to disable.");
         ImGui.Separator();
         if (Checkbox("Enable auto play", ref DalamudApi.Configuration.EnableAutoPlay))

@@ -17,7 +17,8 @@ public class Configuration : IPluginConfiguration
         EnableManualPlay = true,
         EnableNSecMiniBurst = true,
         EnableNSecBeforeBurst = true,
-        AstroStatus = true;
+        AstroStatus = true,
+        ShowDebugMessage = false;
 
     public List<string>
         MeleePriority = new(),
