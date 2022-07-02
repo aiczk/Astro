@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Dalamud;
+using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Gauge;
 
@@ -84,11 +84,15 @@ namespace Astro.Helper
                 return DalamudApi.ClientState.LocalPlayer!.ObjectId;
             
             var cardType = GetCardType(CurrentCard);
+
             if (IsDivinationInStatusList)
                 cardType |= ArcanumType.Burst;
 
             if (IsDrawCloseToReady && !IsDivinationCloseToReady)
                 cardType |= ArcanumType.MiniBurst;
+            
+            if(DalamudApi.Configuration.ShowDebugMessage)
+                PluginLog.Log($"Card => {cardType:F}");
 
             for (var i = 0; i < 2; i++)
             {
@@ -102,15 +106,32 @@ namespace Astro.Helper
                 if (member != null)
                 {
                     if(DalamudApi.Configuration.ShowDebugMessage)
-                        DalamudApi.ChatGui.Print($"{cardType} => {member.ClassJob.GameData?.Abbreviation ?? "none"}");
-                    
+                        PluginLog.Log($"Play => {cardType:F} => {member.ClassJob.GameData?.Abbreviation ?? "none"}");
+
                     return member.ObjectId;
                 }
 
-                cardType = cardType == ArcanumType.Melee ? ArcanumType.Range : ArcanumType.Melee;
+                if (cardType.HasFlag(ArcanumType.Melee))
+                {
+                    cardType &= ~ArcanumType.Melee;
+                    cardType |= ArcanumType.Range;
+                } 
+                else if (cardType.HasFlag(ArcanumType.Range))
+                {
+                    cardType &= ~ArcanumType.Range;
+                    cardType |= ArcanumType.Melee;
+                }
+                
+                if(DalamudApi.Configuration.ShowDebugMessage)
+                    PluginLog.Log($"Turn it over => {cardType:F}");
             }
+
+            var random = DalamudApi.PartyList[Random.Next(DalamudApi.PartyList.Length)]!;
             
-            return DalamudApi.PartyList[Random.Next(DalamudApi.PartyList.Length)]!.ObjectId;
+            if (DalamudApi.Configuration.ShowDebugMessage)
+                PluginLog.Log($"Random => {cardType:F} => {random.ClassJob.GameData?.Abbreviation ?? "none"}");
+            
+            return random.ObjectId;
         }
 
         private static ArcanumType GetRole(byte role)
