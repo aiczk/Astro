@@ -97,11 +97,12 @@ namespace Astro.Helper
             for (var i = 0; i < 2; i++)
             {
                 var member = DalamudApi.PartyList
-                    .Where(x => GetRole(x.ClassJob.GameData?.Role ?? 0) == cardType)
-                    .Where(x => Weights[cardType].Exists(y => y == x.ClassJob.GameData?.Abbreviation))
+                    .Where(x => cardType.HasFlag(GetCardType(x.ClassJob.GameData?.Role ?? 0)))
+                    .Where(x => Weights[cardType].Exists(y => y == x.ClassJob.GameData.Abbreviation))
                     .Where(x => !x.Statuses.Any(y => y.StatusId is >= 1882 and <= 1887 or Weakness or BrinkOfDeath))
-                    .Where(x => x.Statuses.All(y => y.GameData.Name != DamageDownString()))
-                    .FirstOrDefault(x => Weights[cardType].Exists(y => y == x.ClassJob.GameData?.Abbreviation));
+                    .Where(x => x.Statuses.Any(y => y.GameData.Name != DamageDownString()))
+                    .OrderBy(x => Weights[cardType].IndexOf(x.ClassJob.GameData?.Abbreviation))
+                    .FirstOrDefault();
 
                 if (member != null)
                 {
@@ -134,7 +135,7 @@ namespace Astro.Helper
             return random.ObjectId;
         }
 
-        private static ArcanumType GetRole(byte role)
+        private static ArcanumType GetCardType(byte role)
         {
             return role switch
             {
