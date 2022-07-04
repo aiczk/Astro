@@ -33,7 +33,6 @@ namespace Astro
         {
             DalamudApi.Initialize(pluginInterface);
             Resolver.Initialize();
-            AstroLog.Initialize();
             
             HookHelper.Enable<Functions.ReceiveAbility>("4C 89 44 24 ?? 55 56 57 41 54 41 55 41 56 48 8D 6C 24 ??", ReceiveAbilityDetour);
             HookHelper.Enable<Functions.TryAction>((IntPtr)ActionManager.fpUseAction, TryActionDetour);
@@ -126,7 +125,6 @@ namespace Astro
         void IDisposable.Dispose()
         {
             DalamudApi.CommandManager.RemoveHandler(CommandName);
-            AstroLog.Dispose();
             HookHelper.Disable<Functions.ReceiveAbility>();
             HookHelper.Disable<Functions.TryAction>();
             abilitySubject.Dispose();

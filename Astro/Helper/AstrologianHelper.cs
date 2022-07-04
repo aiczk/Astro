@@ -84,15 +84,13 @@ namespace Astro.Helper
                 return DalamudApi.ClientState.LocalPlayer!.ObjectId;
             
             var cardType = GetCardType(CurrentCard);
-
-            if (IsDivinationInStatusList)
+            if (IsDivinationInStatusList || IsDivinationCloseToReady)
                 cardType |= ArcanumType.Burst;
-
-            if (IsDrawCloseToReady && !IsDivinationCloseToReady)
+            else if (IsDrawCloseToReady && !IsDivinationCloseToReady)
                 cardType |= ArcanumType.MiniBurst;
-            
+
             if(DalamudApi.Configuration.ShowDebugMessage)
-                PluginLog.Log($"Card => {cardType:F}");
+                PluginLog.Log($"Card({CurrentCard}) => {cardType:F}");
 
             for (var i = 0; i < 2; i++)
             {
@@ -107,7 +105,7 @@ namespace Astro.Helper
                 if (member != null)
                 {
                     if(DalamudApi.Configuration.ShowDebugMessage)
-                        PluginLog.Log($"Play => {cardType:F} => {member.ClassJob.GameData?.Abbreviation ?? "none"}");
+                        PluginLog.Log($"Play({CurrentCard}) => {cardType:F} => {member.ClassJob.GameData?.Abbreviation ?? "none"}");
 
                     return member.ObjectId;
                 }
@@ -130,7 +128,7 @@ namespace Astro.Helper
             var random = DalamudApi.PartyList[Random.Next(DalamudApi.PartyList.Length)]!;
             
             if (DalamudApi.Configuration.ShowDebugMessage)
-                PluginLog.Log($"Random => {cardType:F} => {random.ClassJob.GameData?.Abbreviation ?? "none"}");
+                PluginLog.Log($"Random({CurrentCard}) => {cardType:F} => {random.ClassJob.GameData?.Abbreviation ?? "none"}");
             
             return random.ObjectId;
         }
